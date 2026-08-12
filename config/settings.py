@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -19,18 +20,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def env_list(name, default=None):
+    value = os.getenv(name)
+    if not value:
+        return default or []
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ui&^jvu1f$rqic_k!44b^^b8avg&qf-b(6skdk6vnj9+hgc^ge'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-ui&^jvu1f$rqic_k!44b^^b8avg&qf-b(6skdk6vnj9+hgc^ge')
 
 AUTH_USER_MODEL = 'accounts.Account'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DEBUG', True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', [])
 
 
 # Application definition
@@ -114,11 +129,11 @@ ASGI_APPLICATION = 'config.asgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "barber_go",
-        "USER": "postgres",
-        "PASSWORD": "12345678",
-        "HOST": "127.0.0.1",
-        "PORT": "5433",
+        "NAME": os.getenv("DB_NAME", "barber_go"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "12345678"),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "5433"),
     }
 }
 
@@ -162,18 +177,18 @@ STATIC_URL = 'static/'
 
 
 # Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ismoilow571@gmail.com'
-EMAIL_HOST_PASSWORD = 'ifsxcigtxlnuifbn'
-DEFAULT_FROM_EMAIL = 'ismoilow571@gmail.com'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ismoilow571@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'ifsxcigtxlnuifbn')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 
 # Celery configurations
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/0")
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -181,11 +196,13 @@ CELERY_TIMEZONE = TIME_ZONE
 
 
 #Web socket settings
+CHANNEL_LAYERS_HOST = os.getenv("CHANNEL_LAYERS_HOST", "127.0.0.1")
+CHANNEL_LAYERS_PORT = int(os.getenv("CHANNEL_LAYERS_PORT", "6379"))
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(CHANNEL_LAYERS_HOST, CHANNEL_LAYERS_PORT)],
         },
     },
 }

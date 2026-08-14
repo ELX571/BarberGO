@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buyurtmalar - BarberGo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}?v=10">
+{% endblock %}
+
+{% block content %}
+<div class="orders-page fade-in">
+
+    <!-- Page Header -->
+    <div class="orders-header">
+        <h1>Buyurtmalar</h1>
+        <button class="create-order-btn" id="createOrderBtn" style="display: none;" onclick="openOrderModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Yangi Buyurtma
+        </button>
+    </div>
+
+    <!-- Status Filters -->
+    <div class="status-filters">
+        <button class="filter-btn active" data-filter="all">Barchasi</button>
+        <button class="filter-btn" data-filter="pending">Kutilmoqda</button>
+        <button class="filter-btn" data-filter="accepted">Qabul qilingan</button>
+        <button class="filter-btn" data-filter="canceled">Bekor qilingan</button>
+    </div>
+
+    <!-- Orders List -->
+    <div id="ordersList" class="orders-list"></div>
+
+    <!-- Loading State -->
+    <div id="ordersLoading" class="state-box">
+        <div class="spinner"></div>
+        <p>Buyurtmalar yuklanmoqda...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="ordersEmpty" class="state-box" style="display:none;">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        <h3 style="margin-top:1rem; color:var(--text-primary);">Buyurtmalar topilmadi</h3>
+        <p style="color:var(--text-secondary);">Hozircha sizda hech qanday buyurtma yo'q.</p>
+    </div>
+
+    <!-- Auth Required State -->
+    <div id="authRequired" class="state-box" style="display:none;">
+        <h3 style="color:var(--text-primary);">Tizimga kirish kerak</h3>
+        <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Buyurtmalarni ko'rish uchun avval tizimga kiring.</p>
+        <a href="/login/" class="create-order-btn" style="text-decoration:none;">Kirish</a>
+    </div>
+</div>
+
+<!-- Create Order Modal (only for customers) -->
+<div class="modal-overlay" id="orderModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>Yangi Buyurtma</h2>
+            <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+        </div>
+        <div class="alert-error" id="orderError" style="display: none;"></div>
+        <form id="createOrderForm">
+            <div class="modal-input-group">
+                <label>Sartarosh (Barber ID)</label>
+                <input type="number" id="orderBarber" class="modal-input" placeholder="Barber ID raqamini kiriting" required>
+            </div>
+            <div class="modal-input-group">
+                <label>Tavsif</label>
+                <textarea id="orderDescription" class="modal-input" placeholder="Qanday xizmat kerak? Batafsil yozing..." required style="min-height:100px; resize:vertical;"></textarea>
+            </div>
+            <div class="modal-input-group">
+                <label>Vaqt (qachon kelasiz)</label>
+                <input type="datetime-local" id="orderTime" class="modal-input" required>
+            </div>
+            <div class="modal-input-group">
+                <label>Rasm (ixtiyoriy)</label>
+                <input type="file" id="orderImage" class="modal-input" accept="image/*" style="padding:0.8rem 1rem;">
+            </div>
+            <button type="submit" class="modal-submit-btn">
+                Buyurtma berish
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/orders.js' %}?v=10"></script>
+{% endblock %}

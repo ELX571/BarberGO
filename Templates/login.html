@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}BarberGo - Kirish{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=7">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Login Form -->
+    <div class="auth-card" id="loginCard">
+        <div class="auth-header">
+            <h2>Xush kelibsiz</h2>
+            <p>Akkauntingizga kirish uchun ma'lumotlarni kiriting</p>
+        </div>
+        
+        <div class="alert-error" id="loginError" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span id="loginErrorText"></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="username" class="auth-input" required placeholder="Foydalanuvchi nomi">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" class="auth-input" required placeholder="Parol">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            
+            <button type="submit" class="auth-btn-primary">
+                Tizimga kirish
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+        </form>
+        
+        <div class="auth-footer" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+            <a href="#" id="showForgetPasswordLink" style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">Parolni unutdingizmi?</a>
+            <div style="margin-top: 0.5rem;">Akkauntingiz yo'qmi? <a href="/register/">Ro'yxatdan o'tish</a></div>
+        </div>
+    </div>
+
+    <!-- Forget Password: Step 1 (Username) -->
+    <div class="auth-card" id="forgetCard1" style="display: none;">
+        <div class="auth-header">
+            <h2>Parolni tiklash</h2>
+            <p>Foydalanuvchi nomingizni kiriting. Biz sizning pochtangizga kod jo'natamiz.</p>
+        </div>
+        
+        <div class="alert-error" id="forget1Error" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span id="forget1ErrorText"></span>
+        </div>
+
+        <form id="forget1Form">
+            <div class="input-group">
+                <input type="text" id="forget_username" class="auth-input" required placeholder="Foydalanuvchi nomi">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            
+            <button type="submit" class="auth-btn-primary">
+                Kod jo'natish
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <a href="#" id="backToLoginLink">Orqaga (Kirish)</a>
+        </div>
+    </div>
+
+    <!-- Forget Password: Step 2 (Code + New Password) -->
+    <div class="auth-card" id="forgetCard2" style="display: none;">
+        <div class="auth-header">
+            <h2>Yangi parol</h2>
+            <p>Pochtaga borgan kodni va yangi parolni kiriting</p>
+        </div>
+        
+        <div class="alert-error" id="forget2Error" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span id="forget2ErrorText"></span>
+        </div>
+        
+        <div class="alert-success" id="forget2Success" style="display: none; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 12px; margin-bottom: 2rem; font-size: 0.95rem; border: 1px solid rgba(16, 185, 129, 0.2); text-align: center;">
+            Parol muvaffaqiyatli o'zgartirildi! Endi tizimga kirishingiz mumkin.
+        </div>
+
+        <form id="forget2Form">
+            <div class="input-group">
+                <input type="text" id="forget_code" class="auth-input" required placeholder="Tasdiqlash kodi">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="forget_new_password" class="auth-input" required placeholder="Yangi parol">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="forget_re_password" class="auth-input" required placeholder="Yangi parolni takrorlang">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            
+            <button type="submit" class="auth-btn-primary">
+                Parolni yangilash
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <a href="#" id="backToLoginLink2">Asosiy sahifaga qaytish</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}?v=7"></script>
+<script>
+    // JS override to show error text correctly with the new HTML structure for login form
+    const loginForm = document.getElementById("loginForm");
+    if(loginForm) {
+        const obs = new MutationObserver((mutations) => {
+            const errDiv = document.getElementById("loginError");
+            if (errDiv.style.display === "block" && errDiv.innerText) {
+                const txt = errDiv.innerText;
+                if(!errDiv.querySelector('svg')) {
+                    errDiv.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> <span>${txt}</span>`;
+                }
+            }
+        });
+        obs.observe(document.getElementById("loginError"), { attributes: true });
+    }
+</script>
+{% endblock %}

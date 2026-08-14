@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}BarberGo - Yangi Post Yaratish{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=6">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="padding-top: 0; min-height: 80vh;">
+    <div class="auth-card register-card">
+        <div class="auth-header">
+            <h2>Yangi Post</h2>
+            <p>O'z ishlaringizni mijozlar bilan ulashing</p>
+        </div>
+        
+        <div class="alert-error" id="postError" style="display: none;"></div>
+        <div class="alert-success" id="postSuccess" style="display: none; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(16, 185, 129, 0.2);"></div>
+
+        <form id="createPostForm">
+            <div class="input-group">
+                <input type="text" id="title" class="auth-input" required placeholder="Sarlavha (masalan: Yangi soch turmagi)">
+            </div>
+            
+            <div class="input-group">
+                <textarea id="description" class="auth-input" required placeholder="Post haqida batafsil ma'lumot..." style="min-height: 140px; resize: vertical; padding-left: 1.2rem; padding-top: 1.2rem;"></textarea>
+            </div>
+            
+            <div class="auth-grid" style="margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;">Rasm yuklash</label>
+                    <input type="file" id="image" class="auth-input" accept="image/*" style="padding: 0.8rem 1rem;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;">Video yuklash (ixtiyoriy)</label>
+                    <input type="file" id="video" class="auth-input" accept="video/*" style="padding: 0.8rem 1rem;">
+                </div>
+            </div>
+            
+            <button type="submit" class="auth-btn-primary">
+                Postni Saqlash
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/create_post.js' %}?v=1"></script>
+{% endblock %}

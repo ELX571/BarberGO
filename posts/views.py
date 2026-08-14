@@ -1,11 +1,12 @@
 from drf_yasg.utils import swagger_auto_schema
+from django.db.models import BooleanField, Case, Value, When
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.authtications import JwtAuthentication
-from base.permissions import IsOwner
 from posts.models import Post, Comment
 from posts.serializers import PostCreateSerializer, PostDetailsSerializer, CommentSerializer, CommentCreateSerializer, PostSerializer
 
@@ -108,7 +109,7 @@ class Posts(viewsets.GenericViewSet):
 
         comment = Comment.objects.create(
             user=request.user,
-            post=post,
+            parent_post=post,
             text=serializer.validated_data["text"]
         )
 
@@ -127,8 +128,26 @@ class Posts(viewsets.GenericViewSet):
         serializer=CommentSerializer(comment,many=True)
 
         return Response(serializer.data)
+class RecommendedPostViewSet(ListModelMixin, viewsets.GenericViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    authentication_classes = [JwtAuthentication]
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        user_region = user.city
 
-
+        return (
+            Post.objects
+            .annotate(
+                is_local=Case(
+                    When(user__city=user_region, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
+                )
+            )
+            .order_by('-is_local', '-created_at')
+        )
 
 

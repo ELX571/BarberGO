@@ -19,14 +19,16 @@ schema_view=get_schema_view(
 urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-
-    path('step-1/', TemplateView.as_view(template_name='accounts/register_step_1.html'), name='register_step_1'),
-    path('step-2/', TemplateView.as_view(template_name='accounts/register_step_2.html'), name='register_step_2'),
-    path('step-3/', TemplateView.as_view(template_name='accounts/register_step_3.html'), name='register_step_3'),
-    path('', TemplateView.as_view(template_name='build/home_page.html'), name='home_page'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('orders/', include('orders.urls')),
+    
+    # Frontend Routes
+    path('', TemplateView.as_view(template_name='index.html'), name='home'),
+    path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
+    path('register/', TemplateView.as_view(template_name='register.html'), name='register'),
+    path('create-post/', TemplateView.as_view(template_name='create_post.html'), name='create-post'),
+    path('orders-ui/', TemplateView.as_view(template_name='orders.html'), name='orders-ui'),
+    path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
 ]

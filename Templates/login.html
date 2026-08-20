@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 {% load static %}
 
 {% block title %}BarberGo - Kirish{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=7">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=10">
 {% endblock %}
 
 {% block content %}
@@ -12,6 +12,16 @@
     <!-- Login Form -->
     <div class="auth-card" id="loginCard">
         <div class="auth-header">
+            <div class="auth-avatar">
+                <div class="auth-avatar-ring">
+                    <div class="auth-avatar-inner">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
             <h2>Xush kelibsiz</h2>
             <p>Akkauntingizga kirish uchun ma'lumotlarni kiriting</p>
         </div>

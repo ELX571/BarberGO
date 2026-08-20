@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soch Turmaklari - BarberGo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="hairstyles-page fade-in">
+    
+    <div class="hairstyles-header" data-aos="fade-down">
+        <h1>Soch Turmaklari Katalo'gi</h1>
+        <p>O'zingizga eng mos keladigan uslubni toping va ustangizga ko'rsating</p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="hairstyles-categories" data-aos="fade-up" data-aos-delay="100">
+        <button class="category-btn active" onclick="filterCategory(this, 'all')">Barchasi</button>
+        <button class="category-btn" onclick="filterCategory(this, 'classic')">Klassik</button>
+        <button class="category-btn" onclick="filterCategory(this, 'modern')">Zamonaviy</button>
+        <button class="category-btn" onclick="filterCategory(this, 'fade')">Fade uslubi</button>
+        <button class="category-btn" onclick="filterCategory(this, 'kids')">Bolalar uchun</button>
+    </div>
+
+    <!-- Grid of Styles -->
+    <div class="hairstyles-grid">
+        
+        <!-- Style 1 -->
+        <div class="hairstyle-card" data-category="fade" data-aos="zoom-in" data-aos-delay="150">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-badge">Ommabop 🔥</div>
+                <!-- Pushing placeholder if no actual image provided by backend -->
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Low Fade</h3>
+                <p>Yon tomonlar pastdan qisqartirilib, tepa qismi biroz uzun qoldiriladigan zamonaviy uslub.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.9 (240 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 2 -->
+        <div class="hairstyle-card" data-category="modern" data-aos="zoom-in" data-aos-delay="200">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-badge">Yangi ✨</div>
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Textured Crop</h3>
+                <p>Tepa qismi teksturali qilib kesilgan, yuzni ochib turuvchi juda trenddagi kalta uslub.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.8 (185 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 3 -->
+        <div class="hairstyle-card" data-category="classic" data-aos="zoom-in" data-aos-delay="250">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-badge">Klassika 🎩</div>
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Pompadour</h3>
+                <p>Tepa qismiga hajm berilib, orqaga taraladigan jiddiy va salobatli klassik turmak.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.7 (320 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 4 -->
+        <div class="hairstyle-card" data-category="kids" data-aos="zoom-in" data-aos-delay="300">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Bolalar Uslubi</h3>
+                <p>Kichkintoylar uchun maxsus, tez bitadigan va qulay qisqa soch turmagi.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.9 (150 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 5 -->
+        <div class="hairstyle-card" data-category="modern" data-aos="zoom-in" data-aos-delay="350">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Quiff</h3>
+                <p>Old qismi yuqoriga va biroz orqaga taralgan o'ta mashhur zamonaviy turmak.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.7 (210 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 6 -->
+        <div class="hairstyle-card" data-category="fade" data-aos="zoom-in" data-aos-delay="400">
+            <div class="hairstyle-img-wrapper">
+                <div class="hairstyle-badge">Trend 🚀</div>
+                <div class="hairstyle-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                </div>
+            </div>
+            <div class="hairstyle-info">
+                <h3>Mid Fade</h3>
+                <p>Yon qismlari o'rta balandlikdan boshlab qisqartirib tushiladigan universal uslub.</p>
+                <div class="hairstyle-footer">
+                    <div class="hairstyle-popularity">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>4.9 (450 fikr)</span>
+                    </div>
+                    <button class="btn-select-style">Tanlash</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterCategory(btn, category) {
+        // Update active state on buttons
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Filter cards
+        const cards = document.querySelectorAll('.hairstyle-card');
+        cards.forEach(card => {
+            // Remove AOS classes temporarily to trigger re-animation if wanted, 
+            // but simple display toggle is safer for grid layout
+            card.style.transition = 'all 0.4s ease';
+            
+            if (category === 'all' || card.getAttribute('data-category') === category) {
+                card.style.display = 'block';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                }, 50);
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 400); // Wait for transition
+            }
+        });
+        
+        // Refresh AOS just in case page height changed drastically
+        setTimeout(() => {
+            if(window.AOS) AOS.refresh();
+        }, 500);
+    }
+</script>
+{% endblock %}

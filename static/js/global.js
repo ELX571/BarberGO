@@ -7,34 +7,60 @@ function checkAuthState() {
     const userDataRaw = localStorage.getItem('user_data');
     const authLinks = document.getElementById('authLinks');
     const addPostBtn = document.getElementById('addPostBtn');
+    const currentPath = window.location.pathname;
     
     if (token) {
+        // Redirect to home if user is already logged in but visits login/register
+        if (currentPath === '/login/' || currentPath === '/register/') {
+            window.location.href = '/';
+            return;
+        }
+
         // Handle Role Based Button Visibility
         if (userDataRaw) {
             try {
                 const user = JSON.parse(userDataRaw);
-                if (user.role === 'barber' && addPostBtn) {
-                    addPostBtn.style.display = 'flex';
+                const userRole = (user.role || user.user_type || '').toLowerCase();
+                
+                if (userRole === 'barber') {
+                    if (addPostBtn) addPostBtn.style.display = 'flex';
+                    
+                    const filterSidebarBtn = document.getElementById('filterSidebarBtn');
+                    if (filterSidebarBtn) filterSidebarBtn.style.display = 'none';
+                    
+                    // Prevent direct access to filters page
+                    if (currentPath === '/filters/') {
+                        window.location.href = '/';
+                        return;
+                    }
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("Error parsing user data:", e);
+            }
         }
 
         // user is logged in
-        authLinks.innerHTML = `
-            <a href="/profile/" class="nav-brand" style="margin-right:1rem; font-size:1rem; color:var(--text-primary);">Profil</a>
-            <button onclick="logout()" class="logout-link" style="background:none; border:none; cursor:pointer;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                Chiqish
-            </button>
-        `;
+        if (authLinks) {
+            authLinks.innerHTML = `
+                <a href="/profile/" class="nav-profile-pic" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--accent-primary); transition: transform 0.3s ease; box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://ui-avatars.com/api/?name=Olimjon+Usta&background=f8fafc&color=ef6c00&size=100" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
+                </a>
+            `;
+        }
     } else {
+        // Redirect to login if user is not logged in and not already on auth pages
+        if (currentPath !== '/login/' && currentPath !== '/register/') {
+            window.location.href = '/login/';
+            return;
+        }
+
         // User is not logged in
-        authLinks.innerHTML = `
-            <a href="/login/" class="login-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                Kirish
-            </a>
-        `;
+        if (authLinks) {
+            authLinks.innerHTML = `
+                <a href="/login/" class="login-link">Kirish</a>
+                <a href="/register/" class="login-link" style="margin-left: 10px;">Ro'yxatdan o'tish</a>
+            `;
+        }
     }
 }
 
@@ -62,7 +88,7 @@ async function apiCall(url, options = {}) {
         headers
     });
 
-    if (response.status === 401) {
+    if (response.status === 401 || response.status === 403) {
         // Token might be expired. A real app would try to refresh here.
         // For now, just logout if unauthorized.
         logout();
@@ -70,3 +96,5 @@ async function apiCall(url, options = {}) {
 
     return response;
 }
+
+

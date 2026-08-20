@@ -76,6 +76,9 @@ REST_FRAMEWORK = {
         'accounts.authtications.JwtAuthentication',
         'accounts.authtications.CsrfExemptSessionAuthentication',
     ),
+'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 SWAGGER_SETTINGS = {
@@ -176,6 +179,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Email settings

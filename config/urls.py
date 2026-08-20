@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -31,4 +33,11 @@ urlpatterns = [
     path('create-post/', TemplateView.as_view(template_name='create_post.html'), name='create-post'),
     path('orders-ui/', TemplateView.as_view(template_name='orders.html'), name='orders-ui'),
     path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
+    path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
+    path('hairstyles/', TemplateView.as_view(template_name='hairstyles.html'), name='hairstyles'),
+    path('chat/', TemplateView.as_view(template_name='chat.html'), name='chat'),
+    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

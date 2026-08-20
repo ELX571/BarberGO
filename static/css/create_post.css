@@ -1,0 +1,242 @@
+/* ── ULTRA PREMIUM MESH BACKGROUND ── */
+/* ── ULTRA PREMIUM MESH BACKGROUND ── */
+body:has(.cp-wrapper) {
+    background-color: #f8fafc !important;
+    background-image: 
+        radial-gradient(at 10% 20%, hsla(28, 100%, 74%, 0.4) 0px, transparent 50%),
+        radial-gradient(at 90% 10%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, hsla(355, 100%, 93%, 0.6) 0px, transparent 50%),
+        radial-gradient(at 10% 90%, hsla(340, 100%, 76%, 0.15) 0px, transparent 50%) !important;
+}
+
+body:has(.cp-wrapper) .content-area {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.cp-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+    min-height: calc(100vh - 80px);
+}
+
+.cp-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 32px;
+    padding: 48px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 
+        0 24px 60px rgba(0, 0, 0, 0.04),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    transition: all 0.4s ease;
+}
+
+.cp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 30px 70px rgba(239, 108, 0, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.cp-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.cp-header h2 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0f172a, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+}
+
+.cp-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.cp-input-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+/* Beautiful Icon inside Input */
+.cp-input-group svg.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    color: #94a3b8;
+    transition: all 0.3s;
+    pointer-events: none;
+}
+
+.cp-input {
+    width: 100%;
+    padding: 18px 20px 18px 56px;
+    border-radius: 20px;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #1e293b;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    font-family: inherit;
+}
+
+.cp-input:focus {
+    background: #ffffff;
+    border-color: #ef6c00;
+    box-shadow: 0 8px 25px rgba(239, 108, 0, 0.1);
+    transform: translateY(-2px);
+}
+.cp-input:focus + svg.input-icon, 
+.cp-input:focus ~ svg.input-icon {
+    color: #ef6c00;
+}
+
+.cp-input::placeholder {
+    color: #cbd5e1;
+    font-weight: 400;
+}
+
+/* File Upload Area - Advanced */
+.cp-upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 36px;
+}
+
+.cp-upload-box {
+    border: 2px dashed rgba(148, 163, 184, 0.4);
+    border-radius: 24px;
+    padding: 40px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    overflow: hidden;
+}
+
+.cp-upload-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(239, 108, 0, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 0;
+}
+
+.cp-upload-box:hover {
+    border-color: #ef6c00;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(239, 108, 0, 0.08);
+}
+.cp-upload-box:hover::before { opacity: 1; }
+
+.cp-upload-box > * { position: relative; z-index: 1; }
+
+.cp-upload-box svg {
+    color: #94a3b8;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cp-upload-box:hover svg {
+    color: #ef6c00;
+    transform: translateY(-5px) scale(1.1);
+}
+
+.cp-upload-box p {
+    color: #475569;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    transition: color 0.3s;
+}
+.cp-upload-box:hover p { color: #ef6c00; }
+
+.cp-upload-box span {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.cp-upload-box input[type="file"] {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+    z-index: 10;
+}
+
+/* File selected state */
+.cp-upload-box.has-file {
+    border-style: solid;
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
+}
+.cp-upload-box.has-file svg { color: #10b981; }
+.cp-upload-box.has-file p { color: #059669; }
+.cp-upload-box.has-file span { background: rgba(16, 185, 129, 0.1); color: #059669; }
+
+.cp-submit-btn {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(234, 88, 12, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.cp-submit-btn::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-20deg);
+    transition: 0.5s;
+}
+
+.cp-submit-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(234, 88, 12, 0.4);
+}
+.cp-submit-btn:hover::after { left: 150%; }
+
+.cp-submit-btn:active { transform: translateY(1px) scale(0.98); }
+
+@media (max-width: 768px) {
+    .cp-card { padding: 32px 24px; border-radius: 24px; }
+    .cp-upload-grid { grid-template-columns: 1fr; gap: 16px; }
+    .cp-wrapper { padding: 20px 16px; }
+    .cp-header h2 { font-size: 1.8rem; }
+}

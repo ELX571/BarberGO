@@ -1,16 +1,34 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 {% load static %}
 
 {% block title %}BarberGo - Ro'yxatdan o'tish{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=10">
 {% endblock %}
 
 {% block content %}
 <div class="auth-wrapper">
     <div class="auth-card register-card">
         <div class="auth-header">
+            <div class="auth-avatar">
+                <div class="auth-avatar-ring auth-avatar-upload" id="avatarUploadArea">
+                    <div class="auth-avatar-inner" id="avatarPreview">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <div class="avatar-upload-hint">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                </div>
+            </div>
             <h2>Yangi Akkaunt</h2>
             <p>BarberGo ga qo'shiling va eng zo'r xizmatlardan bahramand bo'ling</p>
         </div>

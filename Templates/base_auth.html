@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BarberGo{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=15">
+    {% block extra_css %}{% endblock %}
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 30%, #fed7aa 60%, #fdba74 100%);
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background shapes */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 146, 60, 0.04) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
+        }
+
+        /* Floating decorative circles */
+        .auth-bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.07;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .auth-bg-circle:nth-child(1) {
+            width: 300px; height: 300px;
+            background: #f97316;
+            top: -80px; right: -80px;
+            animation: floatCircle1 15s ease-in-out infinite;
+        }
+        .auth-bg-circle:nth-child(2) {
+            width: 200px; height: 200px;
+            background: #fb923c;
+            bottom: -60px; left: -60px;
+            animation: floatCircle2 18s ease-in-out infinite;
+        }
+        .auth-bg-circle:nth-child(3) {
+            width: 150px; height: 150px;
+            background: #f97316;
+            top: 40%; left: 10%;
+            animation: floatCircle3 12s ease-in-out infinite;
+        }
+
+        @keyframes floatCircle1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, 40px); }
+        }
+        @keyframes floatCircle2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+        @keyframes floatCircle3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        .auth-page-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            animation: authSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes authSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo area */
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-logo a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary, #1a1a1a);
+        }
+        .auth-logo svg {
+            color: #f97316;
+            filter: drop-shadow(0 4px 8px rgba(249, 115, 22, 0.35));
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .auth-logo a:hover svg {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .auth-logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #f97316;
+        }
+        .auth-logo-text span {
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Decorative circles -->
+<div class="auth-bg-circle"></div>
+<div class="auth-bg-circle"></div>
+<div class="auth-bg-circle"></div>
+
+<div class="auth-page-container">
+    <!-- Logo -->
+    <div class="auth-logo">
+        <a href="/">
+            <span class="auth-logo-text">Barber<span>Go</span></span>
+            <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 56c5-14 16-22 28-22s23 8 28 22c4 11 14 18 22 18-10 8-22 8-33 0-7-5-11-11-17-11s-10 6-17 11c-11 8-23 8-33 0 8 0 18-7 22-18Z" fill="currentColor"/>
+                <path d="M28 56c8 0 14-4 20-10 6 6 12 10 20 10" stroke="#fff7ed" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+                <circle cx="50" cy="39" r="4.5" fill="#fff7ed" opacity="0.9"/>
+            </svg>
+        </a>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script src="{% static 'js/global.js' %}?v=5"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

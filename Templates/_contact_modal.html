@@ -1,30 +1,30 @@
 <!-- Contact Barber Modal -->
-<div id="contactModal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="modal-content" style="background: var(--bg-card); padding: 32px 24px; border-radius: 24px; width: 90%; max-width: 360px; text-align: center; position: relative; box-shadow: 0 24px 48px rgba(0,0,0,0.2); border: 1px solid var(--border-color); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
-        <button onclick="closeContactModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.05); border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.1)'; this.style.color='var(--text-main)';" onmouseout="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--text-muted)';">&times;</button>
+<div id="contactModal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: #ffffff; padding: 30px; border-radius: 16px; width: 90%; max-width: 340px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: modalPop 0.2s ease-out;">
+        <button onclick="closeContactModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 24px; color: #64748b; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
         
-        <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 12px 24px rgba(249, 115, 22, 0.3); transform: rotate(-5deg);">
-            <i class="fa-solid fa-phone-volume" style="font-size: 28px; color: white; transform: rotate(5deg);"></i>
+        <div style="width: 64px; height: 64px; background: #fff7ed; border: 2px solid #fdba74; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+            <i class="fa-solid fa-phone" style="font-size: 24px; color: #f97316;"></i>
         </div>
         
-        <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-main); font-weight: 700;" id="contactModalName">Usta bilan bog'lanish</h3>
-        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 24px; line-height: 1.5;">Telefon orqali bog'lanishingiz yoki to'g'ridan-to'g'ri xabar yozishingiz mumkin.</p>
+        <h3 style="font-size: 20px; margin-bottom: 8px; color: #0f172a; font-weight: 700; font-family: 'Inter', sans-serif;" id="contactModalName">Usta bilan bog'lanish</h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-family: 'Inter', sans-serif;">Telefon raqamiga qo'ng'iroq qiling yoki to'g'ridan-to'g'ri xabar yozing.</p>
         
-        <div id="contactModalPhoneWrapper" style="display: none; background: var(--bg-main); padding: 16px; border-radius: 16px; margin-bottom: 20px; align-items: center; justify-content: space-between; border: 1px dashed var(--border-color);">
-            <span id="contactModalPhone" style="font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: 0.5px;"></span>
-            <button onclick="copyContactPhone()" style="background: rgba(249,115,22,0.1); border: none; color: #f97316; cursor: pointer; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='rgba(249,115,22,0.15)'" onmouseout="this.style.background='rgba(249,115,22,0.1)'">
+        <div id="contactModalPhoneWrapper" style="display: none; background: #f8fafc; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0;">
+            <span id="contactModalPhone" style="font-size: 16px; font-weight: 600; color: #0f172a; font-family: 'Inter', sans-serif;"></span>
+            <button onclick="copyContactPhone()" style="background: transparent; border: none; color: #f97316; cursor: pointer; font-size: 14px; font-weight: 600; padding: 4px 8px; display: flex; align-items: center; gap: 4px;">
                 <i class="fa-regular fa-copy"></i> Nusxa
             </button>
         </div>
         
-        <button id="contactModalChatBtn" class="btn btn-primary" style="width: 100%; display: flex; justify-content: center; gap: 10px; align-items: center; font-size: 16px; font-weight: 600; padding: 14px; border-radius: 14px; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);" onclick="startChatFromContact()">
-            <i class="fa-regular fa-message" style="font-size: 18px;"></i> Chat orqali yozish
+        <button id="contactModalChatBtn" style="background: #f97316; color: white; border: none; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'" onclick="startChatFromContact()">
+            <i class="fa-regular fa-message"></i> Chat orqali yozish
         </button>
     </div>
 </div>
 <style>
 @keyframes modalPop {
-    0% { transform: scale(0.9); opacity: 0; }
+    0% { transform: scale(0.95); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
 </style>

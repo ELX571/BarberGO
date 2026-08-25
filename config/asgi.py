@@ -1,14 +1,5 @@
 import os
 
-"""
-ASGI config for config project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
-"""
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -24,7 +15,8 @@ application = ProtocolTypeRouter({
     'http': django_asgi_app,
     'websocket': JWTAuthMiddleware(
         URLRouter(
-            notifications.routing.websocket_urlpatterns
+            notifications.routing.websocket_urlpatterns +
+            chat.routing.websocket_urlpatterns
         )
     )
 })

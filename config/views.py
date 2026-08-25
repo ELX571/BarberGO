@@ -23,9 +23,10 @@ def profile_view(request):
         liked_posts = Post.objects.filter(likes=user).order_by('-created_at')
         is_own_profile = True
     else:
-        from django.shortcuts import redirect
-        return redirect('/login/')
-    
+        my_posts = []
+        liked_posts = []
+        is_own_profile = False
+        
     context = {
         'is_own_profile': is_own_profile,
         'user': user,

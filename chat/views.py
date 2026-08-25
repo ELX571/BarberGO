@@ -42,7 +42,11 @@ class MyChatRoomsView(generics.ListAPIView):
             qs = qs.filter(
                 Q(order__id__icontains=q) |
                 Q(order__customer__username__icontains=q) |
-                Q(order__barber__username__icontains=q)
+                Q(order__barber__username__icontains=q) |
+                Q(order__customer__first_name__icontains=q) |
+                Q(order__customer__last_name__icontains=q) |
+                Q(order__barber__first_name__icontains=q) |
+                Q(order__barber__last_name__icontains=q)
             )
         return qs
 
@@ -52,12 +56,19 @@ class MyChatRoomsView(generics.ListAPIView):
         for room in self.get_queryset():
             order = room.order
             other = order.barber if order.customer_id == user.id else order.customer
+            
+            # Agar foydalanuvchida ism-familiya kiritilgan bo'lsa, shuni ko'rsatamiz, 
+            # yo'qsa username ko'rsatamiz.
+            other_name = f"{other.first_name} {other.last_name}".strip()
+            if not other_name:
+                other_name = other.username
+                
             last_msg = room.messages.order_by('-created_at').first()
             unread = room.messages.filter(is_read=False).exclude(sender=user).count()
             data.append({
                 'order_id': room.order_id,
                 'other_user_id': other.id,
-                'other_user_name': other.username,
+                'other_user_name': other_name,
                 'last_message': last_msg.text if last_msg else None,
                 'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
                 'unread_count': unread,

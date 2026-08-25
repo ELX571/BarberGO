@@ -1,35 +1,28 @@
-#workflow fayl nomi yoziladi
 name: ci-cd function
 
-#Qachon ishlashi aytiladi
 on:
   push:
-    branches: ['main'] #main branchga push bolganda ishlasin
+    branches: ['main', 'master']
 
-#Joblar (vazifalar)
 jobs:
-  test:  #job nomi
-    runs-on: ubuntu-latest #qaysi os da un bolishi
+  test:
+    runs-on: ubuntu-latest
 
-    steps: #Qadamlar
-      - name: Kodni olish #action nomi
-        uses: actions/checkout@v4  #bu tayyor action
+    steps:
+      - name: Kodni olish
+        uses: actions/checkout@v4
 
       - name: Python ornatish
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Test qilish
-        run: python manage.py test #terminal buyrugi
-
-        #kutubxonalrni olish
       - name: requirements.txt ni ornatish
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.py
+          pip install -r requirements.txt
 
-      - name: Test qilish env
+      - name: Test qilish
         env:
           SECRET_KEY: django-insecure-ui&^jvu1f$rqic_k!44b^^b8avg&qf-b(6skdk6vnj9+hgc^ge
           DEBUG: True
@@ -52,4 +45,4 @@ jobs:
           CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/0
           CHANNEL_LAYERS_HOST: 127.0.0.1
           CHANNEL_LAYERS_PORT: 6379
-
+        run: python manage.py test

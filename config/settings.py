@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'posts',
     'orders',
     'notifications',
+    'chat',
 
     #rd
     'rest_framework',

@@ -25,6 +25,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('orders/', include('orders.urls')),
+
+    path('chat/', include('chat.urls')),
     
     # Frontend Routes
     path('', TemplateView.as_view(template_name='index.html'), name='home'),

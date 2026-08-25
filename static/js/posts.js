@@ -119,6 +119,9 @@ function createPostCard(post) {
                     <span>By ${author}</span>
                     <span>${date}</span>
                 </div>
+                <button class="btn btn-outline" style="width:100%; margin-top:12px; border-color:var(--border-color); color:var(--text-main);" onclick="openContactModal(${post.user.id}, '${author}', '${post.user.phone_number || ''}')">
+                    <i class="fa-solid fa-phone" style="margin-right:6px; color:#f97316;"></i> Bog'lanish
+                </button>
             </div>
         </div>
     `;

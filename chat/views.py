@@ -118,3 +118,51 @@ class ChatMessageUploadView(generics.CreateAPIView):
                 'created_at': message.created_at.isoformat(),
             }
         )
+
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
+from accounts.models import Account
+
+@login_required
+def start_chat_view(request, user_id):
+    """
+    Finds or creates a dummy Order between request.user and user_id to serve as a chat room,
+    then redirects to the chat page for that room.
+    """
+    user1 = request.user
+    try:
+        user2 = Account.objects.get(pk=user_id)
+    except Account.DoesNotExist:
+        return redirect('/chat/')
+
+    if user1.id == user2.id:
+        return redirect('/chat/')
+
+    # Try to find an existing order
+    order = Order.objects.filter(
+        (Q(customer=user1) & Q(barber=user2)) |
+        (Q(customer=user2) & Q(barber=user1))
+    ).first()
+
+    if not order:
+        # Create a dummy order
+        # Determine who is customer and who is barber (doesn't matter much for chat-only)
+        customer = user1 if user1.role == 'customer' else user2
+        barber = user1 if user1.role == 'barber' else user2
+        
+        # If both are the same role, just pick arbitrarily
+        if customer.role == barber.role:
+            customer = user1
+            barber = user2
+            
+        order = Order.objects.create(
+            customer=customer,
+            barber=barber,
+            status=Order.Status.PENDING,
+            description="Chat uchun avtomatik yaratilgan",
+            endpoint_time=timezone.now() + timedelta(days=1)
+        )
+        
+    return redirect(f'/chat/{order.id}/')

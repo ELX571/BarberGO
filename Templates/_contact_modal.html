@@ -1,0 +1,24 @@
+<!-- Contact Barber Modal -->
+<div id="contactModal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="modal-content glass-panel" style="background: var(--bg-card); padding: 24px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; position: relative;">
+        <button onclick="closeContactModal()" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">&times;</button>
+        
+        <div style="width: 64px; height: 64px; background: rgba(249, 115, 22, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+            <i class="fa-solid fa-phone" style="font-size: 24px; color: #f97316;"></i>
+        </div>
+        
+        <h3 style="font-size: 20px; margin-bottom: 8px; color: var(--text-main);" id="contactModalName">Usta bilan bog'lanish</h3>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Telefon orqali bog'lanishingiz yoki chat orqali yozishingiz mumkin.</p>
+        
+        <div id="contactModalPhoneWrapper" style="display: none; background: var(--bg-main); padding: 12px; border-radius: 8px; margin-bottom: 16px; align-items: center; justify-content: space-between;">
+            <span id="contactModalPhone" style="font-size: 16px; font-weight: 600; color: var(--text-main); letter-spacing: 0.5px;"></span>
+            <button onclick="copyContactPhone()" style="background: none; border: none; color: #f97316; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+                <i class="fa-regular fa-copy"></i> Nusxa
+            </button>
+        </div>
+        
+        <button id="contactModalChatBtn" class="btn btn-primary" style="width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center;" onclick="startChatFromContact()">
+            <i class="fa-regular fa-message"></i> Chatga yozish
+        </button>
+    </div>
+</div>

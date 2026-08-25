@@ -122,3 +122,49 @@ async function apiCall(url, options = {}) {
 }
 
 
+
+// --- Contact Modal Logic ---
+let currentContactUserId = null;
+let currentContactPhone = null;
+
+function openContactModal(userId, name, phone) {
+    currentContactUserId = userId;
+    currentContactPhone = phone;
+    
+    document.getElementById('contactModalName').innerText = name || "Usta";
+    const phoneWrapper = document.getElementById('contactModalPhoneWrapper');
+    
+    if (phone && phone !== 'null' && phone.trim() !== '') {
+        document.getElementById('contactModalPhone').innerText = phone;
+        phoneWrapper.style.display = 'flex';
+    } else {
+        phoneWrapper.style.display = 'none';
+    }
+    
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeContactModal() {
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function copyContactPhone() {
+    if (currentContactPhone) {
+        navigator.clipboard.writeText(currentContactPhone).then(() => {
+            alert("Raqam nusxalandi: " + currentContactPhone);
+        }).catch(err => {
+            console.error('Nusxa olishda xatolik:', err);
+        });
+    }
+}
+
+function startChatFromContact() {
+    if (!currentContactUserId) return;
+    window.location.href = `/chat/start/${currentContactUserId}/`;
+}

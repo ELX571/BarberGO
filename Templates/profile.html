@@ -65,10 +65,12 @@ function switchProfileTab(event, panelId) {
                             {% endif %}
                         </h2>
                         <p style="color:var(--text-muted); font-size:14px; margin-top:3px;">@{{ user.username }} &middot;
-                            <span style="color:var(--active-text-blue); font-weight:700;">Master Usta</span>
+                            <span style="color:var(--active-text-blue); font-weight:700;">
+                                {% if user.role == 'barber' %}Barber{% else %}Mijoz{% endif %}
+                            </span>
                         </p>
-                        {% if profile.get_city_display %}
-                        <p style="font-size:13px; margin-top:6px; color:var(--text-muted);"><i class="fa-solid fa-location-dot" style="color:var(--active-text-blue);"></i> Toshkent, UZ</p>
+                        {% if user.city %}
+                        <p style="font-size:13px; margin-top:6px; color:var(--text-muted);"><i class="fa-solid fa-location-dot" style="color:var(--active-text-blue);"></i> {{ user.get_city_display }}</p>
                         {% endif %}
                     </div>
                 </div>

@@ -4,7 +4,7 @@ name: ci-cd function
 #Qachon ishlashi aytiladi
 on:
   push:
-    branches: ['main', 'master'] #main branchga push bolganda ishlasin
+    branches: ['main'] #main branchga push bolganda ishlasin
 
 #Joblar (vazifalar)
 jobs:

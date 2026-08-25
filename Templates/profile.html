@@ -8,8 +8,20 @@
     const tk = localStorage.getItem('access_token');
     const isAuth = "{{ is_own_profile|yesno:'true,false' }}" === "true";
     if (tk && !isAuth) {
-        document.cookie = "access_token=" + tk + "; path=/; max-age=86400;";
-        window.location.reload();
+        let cookieTk = null;
+        document.cookie.split(';').forEach(c => {
+            if (c.trim().startsWith('access_token=')) cookieTk = c.trim().substring(13);
+        });
+        if (cookieTk === tk) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_data');
+            document.cookie = "access_token=; path=/; max-age=0;";
+            window.location.href = '/login/';
+        } else {
+            document.cookie = "access_token=" + tk + "; path=/; max-age=86400;";
+            window.location.reload();
+        }
     }
     
 function switchProfileTab(event, panelId) {

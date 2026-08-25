@@ -163,7 +163,7 @@ async function removeBookmarkInline(postId) {
                     {% if post.price %}<div class="tweet-price-badge"><i class="fa-solid fa-wallet"></i> {{ post.price }} UZS</div>{% endif %}
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-outline" style="width:100%; margin-top:12px; margin-bottom:12px; border-color:var(--border-color); color:var(--text-main);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="margin-right:6px; color:#f97316;"></i> Bog&#39;lanish</button>
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog&#39;lanish</button>
                     <div class="tweet-manage-toolbar">
                         <div class="tweet-stats">
                             <span><i class="fa-solid fa-heart" style="color: #ef4444;"></i> {{ post.likes.count|default:0 }}</span>
@@ -210,7 +210,7 @@ async function removeBookmarkInline(postId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-outline" style="width:100%; margin-top:12px; margin-bottom:12px; border-color:var(--border-color); color:var(--text-main);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="margin-right:6px; color:#f97316;"></i> Bog&#39;lanish</button>
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog&#39;lanish</button>
                     <div class="tweet-manage-toolbar">
                         <div class="tweet-manage-actions" style="width: 100%;">
                             <button class="manage-btn delete" onclick="removeLikeInline('{{ post.id }}')" style="width: 100%;">
@@ -251,7 +251,7 @@ async function removeBookmarkInline(postId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-outline" style="width:100%; margin-top:12px; margin-bottom:12px; border-color:var(--border-color); color:var(--text-main);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="margin-right:6px; color:#f97316;"></i> Bog&#39;lanish</button>
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, &#39;{{ post.user.get_full_name|default:post.user.username }}&#39;, &#39;{{ post.user.phone_number|default:&#39;&#39; }}&#39;)"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog&#39;lanish</button>
                     <div class="tweet-manage-toolbar">
                         <div class="tweet-manage-actions" style="width: 100%;">
                             <button class="manage-btn" onclick="removeBookmarkInline('{{ post.id }}')" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2);">

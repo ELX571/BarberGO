@@ -118,9 +118,18 @@
 
 /* Media (Images, Videos) */
 .msg img, .msg video {
-    max-width: 100%;
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
     border-radius: 14px;
     object-fit: cover;
+}
+@media (max-width: 768px) {
+    .msg img, .msg video {
+        max-width: 250px;
+        max-height: 250px;
+    }
 }
 /* If media is the only thing or has text */
 .msg:not(.has-text) img, .msg:not(.has-text) video {

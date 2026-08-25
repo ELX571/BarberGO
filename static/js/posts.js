@@ -102,11 +102,16 @@ function resolveMediaUrl(url) {
 }
 
 function createPostCard(post) {
-    // Assuming post has id, title, description/excerpt, image/photo, author etc based on standard DRF models.
+    const userObj = post.user || {};
     const title = post.title || post.name || 'Barber Post';
     const excerpt = post.description || post.text || post.content || 'Check out this awesome barber style.';
     const imageUrl = resolveMediaUrl(post.image || post.photo) || 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-    const author = post.author?.first_name || post.barber?.first_name || 'Expert Barber';
+    
+    let authorName = userObj.first_name;
+    if (userObj.last_name) authorName += ' ' + userObj.last_name;
+    if (!authorName || authorName.trim() === '') authorName = userObj.username || 'Expert Barber';
+    
+    const avatarUrl = userObj.avatar || '/media/avatars/default.jpg';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString() : 'Recently';
 
     return `
@@ -115,11 +120,12 @@ function createPostCard(post) {
             <div class="post-content">
                 <h3 class="post-title">${title}</h3>
                 <p class="post-excerpt">${excerpt}</p>
-                <div class="post-meta">
-                    <span>By ${author}</span>
-                    <span>${date}</span>
+                <div class="post-meta" style="display:flex; align-items:center; gap:8px;">
+                    <img src="${avatarUrl}" alt="avatar" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random'">
+                    <span style="font-weight: 500;">${authorName}</span>
+                    <span style="margin-left:auto; color:var(--text-muted); font-size:12px;">${date}</span>
                 </div>
-                <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${post.user.id}, '${author}', '${post.user.phone_number || ''}')">
+                <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}')">
                     <i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish
                 </button>
             </div>

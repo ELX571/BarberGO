@@ -35,7 +35,7 @@ urlpatterns = [
     path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
     path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
     path('hairstyles/', TemplateView.as_view(template_name='hairstyles.html'), name='hairstyles'),
-    path('chat/', TemplateView.as_view(template_name='chat.html'), name='chat'),
+    path('chat/', include('chat.urls')),
     path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
 ]
 

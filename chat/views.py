@@ -33,9 +33,18 @@ class MyChatRoomsView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return ChatRoom.objects.filter(
+        qs = ChatRoom.objects.filter(
             Q(order__customer_id=user.id) | Q(order__barber_id=user.id)
         ).select_related('order', 'order__customer', 'order__barber')
+        
+        q = self.request.query_params.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(order__id__icontains=q) |
+                Q(order__customer__username__icontains=q) |
+                Q(order__barber__username__icontains=q)
+            )
+        return qs
 
     def list(self, request, *args, **kwargs):
         user = request.user

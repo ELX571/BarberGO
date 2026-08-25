@@ -123,27 +123,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allRooms = [];
     const searchInput = document.getElementById('roomSearch');
+    let searchTimeout = null;
 
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        const filtered = allRooms.filter(r => 
-            (r.other_user_name || '').toLowerCase().includes(query) ||
-            String(r.order_id).includes(query)
-        );
-        renderRoomList(filtered);
+        const query = e.target.value.trim();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            loadRooms(query);
+        }, 300); // 300ms debounce
     });
 
-    function loadRooms() {
-        apiCall('/chat/rooms/')
+    function loadRooms(query = '') {
+        const url = query ? `/chat/rooms/?q=${encodeURIComponent(query)}` : '/chat/rooms/';
+        apiCall(url)
             .then(res => res.ok ? res.json() : [])
             .then(rooms => {
                 allRooms = rooms;
-                if (!rooms.length) {
+                if (!rooms.length && !query) {
                     emptyMsg.style.display = 'block';
+                    listPanel.innerHTML = '';
                     return;
                 }
+                emptyMsg.style.display = 'none';
                 renderRoomList(rooms);
-                if (preselectOrderId) {
+                if (preselectOrderId && !query) {
                     const match = rooms.find(r => String(r.order_id) === String(preselectOrderId));
                     if (match) openRoom(match);
                 }

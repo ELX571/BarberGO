@@ -127,11 +127,16 @@ async function apiCall(url, options = {}) {
 let currentContactUserId = null;
 let currentContactPhone = null;
 
-function openContactModal(userId, name, phone) {
+function openContactModal(userId, name, phone, avatarUrl) {
     currentContactUserId = userId;
     currentContactPhone = phone;
     
     document.getElementById('contactModalName').innerText = name || "Usta";
+    
+    const avatarImg = document.getElementById('contactModalAvatar');
+    if (avatarImg) {
+        avatarImg.src = avatarUrl || '/media/avatars/default.jpg';
+    }
     const phoneWrapper = document.getElementById('contactModalPhoneWrapper');
     
     if (phone && phone !== 'null' && phone.trim() !== '') {

@@ -3,8 +3,8 @@
     <div class="modal-content" style="background: #ffffff; padding: 30px; border-radius: 16px; width: 90%; max-width: 340px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: modalPop 0.2s ease-out;">
         <button onclick="closeContactModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 24px; color: #64748b; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
         
-        <div style="width: 64px; height: 64px; background: #fff7ed; border: 2px solid #fdba74; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-            <i class="fa-solid fa-phone" style="font-size: 24px; color: #f97316;"></i>
+        <div style="width: 64px; height: 64px; margin: 0 auto 16px;">
+            <img id="contactModalAvatar" src="/media/avatars/default.jpg" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #f97316;" onerror="this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(document.getElementById('contactModalName').innerText) + '&background=random'">
         </div>
         
         <h3 style="font-size: 20px; margin-bottom: 8px; color: #0f172a; font-weight: 700; font-family: 'Inter', sans-serif;" id="contactModalName">Usta bilan bog'lanish</h3>

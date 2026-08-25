@@ -103,7 +103,7 @@ function switchProfileTab(event, panelId) {
                                     {% endif %}
                                 </strong>
                             </div>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }}</span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 
@@ -165,38 +165,129 @@ function switchProfileTab(event, panelId) {
                         </div>
                         {% endwith %}
                         <div style="font-size:12px; color:var(--text-muted); margin-top:10px; font-weight:600;">
-            {% if my_posts %}
-            <div class="masonry-grid">
-                {% for post in my_posts %}
-                <div class="masonry-item" onclick="openPostModal('{{ post.id }}')">
-                    {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="Post image">
-                    {% elif post.video %}
-                    <video src="{{ post.video.url }}" muted loop></video>
-                    {% else %}
-                    <div style="padding:40px 20px; text-align:center; background:#1e1e24; color:var(--text-muted);">
-                        <i class="fa-regular fa-file-lines" style="font-size:32px; margin-bottom:12px; opacity:0.5;"></i>
-                        <div style="font-size:14px; font-weight:600;">Media yo'q</div>
+                            {% with c=profile.completed_orders_count|default:0 %}
+                            {{ c }} ta muvaffaqiyatli buyurtma
+                            {% endwith %}
+                        </div>
                     </div>
-                    {% endif %}
-                    <div class="masonry-overlay">
-                        <div style="font-weight:700; margin-bottom:6px; font-size:15px; color:#fff;">{{ post.title }}</div>
-                        <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-                            <span style="color: rgba(255,255,255,0.7); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }}</span>
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600;"><i class="fa-solid fa-heart" style="color:#ff6b00;"></i> {{ post.likes.count|default:"0" }}</span>
-                                <span style="display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600;"><i class="fa-solid fa-bookmark" style="color:#fff;"></i></span>
+                </div>
+
+                <!-- Stats Mini Grid -->
+                <div class="stats-grid">
+                    <div class="stat-mini-card" style="grid-column: span 3; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;">
+                        <div class="stat-mini-num" style="color:#eab308; font-size: 42px; margin-bottom: 8px;">6.8 <span style="font-size: 16px; color: var(--text-muted);">/ 7.0</span></div>
+                        <div style="display: flex; gap: 6px; font-size: 22px; margin-bottom: 8px;">
+                            <!-- 7 Yulduz vizualizatsiyasi -->
+                            {% for i in '1234567' %}
+                                {% if forloop.counter <= profile.rating_average %}
+                                    <i class="fa-solid fa-star" style="color:#f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));"></i>
+                                {% elif forloop.counter <= profile.rating_average|add:0.5 %}
+                                    <i class="fa-solid fa-star-half-stroke" style="color:#f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-star" style="color:#475569; opacity:0.3;"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="stat-mini-lbl" style="font-size: 14px; font-weight: 700; color: var(--active-text-blue);"><i class="fa-solid fa-ranking-star"></i> Builder Pro Reytingi</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-num" style="color:#10b981;">{{ profile.completed_orders_count|default:0 }}</div>
+                        <div class="stat-mini-lbl"><i class="fa-solid fa-check"></i> Bajarildi</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-num" style="color:#ef4444;">{{ profile.canceled_orders_count|default:0 }}</div>
+                        <div class="stat-mini-lbl"><i class="fa-solid fa-xmark"></i> Bekor</div>
+                    </div>
+                </div>
+
+                {% if profile.builder_info.is_needs_improvement %}
+                <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); padding:16px 20px; border-radius:16px; color:#ef4444; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size:20px;"></i>
+                    <span>Reytinging 3.0 dan past. Iltimos, admin bilan bog'laning yoki sifatni oshiring.</span>
+                </div>
+                {% endif %}
+
+                <!-- Quality Bars -->
+                <div>
+                    <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--active-text-blue);"></i> Sifat Diagrammasi</div>
+                    <div class="quality-row">
+                        <div class="q-item">
+                            <div class="q-header">
+                                <span class="q-title"><i class="fa-solid fa-star" style="color:#eab308;"></i> Ish sifati (O'rtacha)</span>
+                                <span class="q-score" style="color:#eab308;">6.8 / 7.0</span>
+                            </div>
+                            <div class="q-bar" style="background:rgba(234,179,8,0.12);">
+                                <div class="q-fill" style="background:linear-gradient(90deg,#eab308,#f59e0b);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
+                            </div>
+                        </div>
+                        <div class="q-item">
+                            <div class="q-header">
+                                <span class="q-title"><i class="fa-solid fa-clock" style="color:#10b981;"></i> Vaqtga rioya</span>
+                                <span class="q-score" style="color:#10b981;">6.8 / 7.0</span>
+                            </div>
+                            <div class="q-bar" style="background:rgba(16,185,129,0.12);">
+                                <div class="q-fill" style="background:linear-gradient(90deg,#10b981,#34d399);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
+                            </div>
+                        </div>
+                        <div class="q-item">
+                            <div class="q-header">
+                                <span class="q-title"><i class="fa-solid fa-handshake" style="color:#3b82f6;"></i> Xushmuomalalik</span>
+                                <span class="q-score" style="color:#3b82f6;">6.8 / 7.0</span>
+                            </div>
+                            <div class="q-bar" style="background:rgba(59,130,246,0.12);">
+                                <div class="q-fill" style="background:linear-gradient(90deg,#3b82f6,#60a5fa);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+
+                <!-- Reviews -->
+                <div>
+                    <div class="section-title"><i class="fa-solid fa-comments" style="color:var(--active-text-blue);"></i> Mijozlar Izohlari</div>
+                    <div style="display:flex; flex-direction:column; gap:14px;">
+                        {% for review in profile.builder_info.received_reviews.all %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff6b00,#ff8c33);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;">{{ review.client.user.get_full_name|first|default:'?' }}</div>
+                                    <div>
+                                        <div style="font-weight:700; font-size:14px;">{{ review.client.user.get_full_name|default:review.client.user.username }}</div>
+                                        <div style="font-size:12px; color:var(--text-muted);">{{ review.created_at|date:'d M Y'|default:'' }}</div>
+                                    </div>
+                                </div>
+                                <div class="review-stars">
+                                    {% for i in '12345' %}
+                                        {% if forloop.counter <= review.rating %}
+                                        <i class="fa-solid fa-star"></i>
+                                        {% else %}
+                                        <i class="fa-regular fa-star" style="opacity:0.3;"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p style="font-size:14px; color:var(--text-muted); line-height:1.6;">{{ review.comment }}</p>
+                            {% if review.builder_reply %}
+                            <div class="review-reply">
+                                <strong style="color:var(--active-text-blue); font-size:12px;"><i class="fa-solid fa-reply"></i> Sizning javobingiz</strong>
+                                <p style="margin-top:4px;">{{ review.builder_reply }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div style="text-align:center; padding:40px; color:var(--text-muted);">
+                            <i class="fa-regular fa-comment-dots" style="font-size:36px; opacity:0.3; display:block; margin-bottom:12px;"></i>
+                            Hozircha izohlar yo'q.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
             {% else %}
-            <div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
-                <i class="fa-solid fa-camera" style="font-size:48px; opacity:0.2; display:block; margin-bottom:16px;"></i>
-                <div style="font-size:16px; font-weight:600;">Hali postlar yo'q</div>
-            </div>
+                <div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+                    <i class="fa-solid fa-user" style="font-size:48px; opacity:0.2; display:block; margin-bottom:16px;"></i>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:8px;">Siz mijozsiz</h3>
+                    <p style="font-size:14px;">Ustalarning reytingini <a href="#" style="color:var(--active-text-blue);">Usta Qidirish</a> sahifasida ko'ring.</p>
+                </div>
             {% endif %}
         </div>
 
@@ -215,7 +306,7 @@ function switchProfileTab(event, panelId) {
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }}</span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 
@@ -255,7 +346,7 @@ function switchProfileTab(event, panelId) {
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }}</span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 

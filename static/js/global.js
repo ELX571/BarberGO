@@ -10,6 +10,7 @@ function checkAuthState() {
     const currentPath = window.location.pathname;
     
     if (token) {
+        document.cookie = "access_token=" + token + "; path=/; max-age=86400;";
         // Redirect to home if user is already logged in but visits login/register
         if (currentPath === '/login/' || currentPath === '/register/') {
             window.location.href = '/';
@@ -70,6 +71,7 @@ function checkAuthState() {
             `;
         }
     } else {
+        document.cookie = "access_token=; path=/; max-age=0;";
         // Redirect to login if user is not logged in and not already on auth pages
         if (currentPath !== '/login/' && currentPath !== '/register/') {
             window.location.href = '/login/';

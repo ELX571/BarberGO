@@ -55,3 +55,39 @@ class MyChatRoomsView(generics.ListAPIView):
             })
         return Response(data)
 
+
+from rest_framework.parsers import MultiPartParser, FormParser
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+class ChatMessageUploadView(generics.CreateAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def perform_create(self, serializer):
+        order_id = self.kwargs['order_id']
+        order = Order.objects.get(id=order_id)
+        if self.request.user.id not in (order.customer_id, order.barber_id):
+            raise PermissionDenied("Sizda bu chatga yozish huquqi yo'q.")
+        
+        room, _ = ChatRoom.objects.get_or_create(order=order)
+        message = serializer.save(room=room, sender=self.request.user)
+
+        channel_layer = get_channel_layer()
+        group_name = f'chat_{order_id}'
+        
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'chat_message',
+                'message_id': message.id,
+                'sender_id': message.sender.id,
+                'sender_name': message.sender.username,
+                'text': message.text,
+                'image': message.image.url if message.image else None,
+                'video': message.video.url if message.video else None,
+                'voice': message.voice.url if message.voice else None,
+                'created_at': message.created_at.isoformat(),
+            }
+        )

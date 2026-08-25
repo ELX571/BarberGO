@@ -54,6 +54,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender_id': event['sender_id'],
             'sender_name': event['sender_name'],
             'text': event['text'],
+            'image': event.get('image'),
+            'video': event.get('video'),
+            'voice': event.get('voice'),
             'created_at': event['created_at'],
         }))
 

@@ -33,46 +33,53 @@ class MyChatRoomsView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        qs = ChatRoom.objects.filter(
-            Q(order__customer_id=user.id) | Q(order__barber_id=user.id)
-        ).select_related('order', 'order__customer', 'order__barber')
+        qs = Order.objects.filter(
+            Q(customer_id=user.id) | Q(barber_id=user.id)
+        ).select_related('customer', 'barber', 'chat_room')
         
         q = self.request.query_params.get('q', '').strip()
         if q:
             qs = qs.filter(
-                Q(order__id__icontains=q) |
-                Q(order__customer__username__icontains=q) |
-                Q(order__barber__username__icontains=q) |
-                Q(order__customer__first_name__icontains=q) |
-                Q(order__customer__last_name__icontains=q) |
-                Q(order__barber__first_name__icontains=q) |
-                Q(order__barber__last_name__icontains=q)
+                Q(id__icontains=q) |
+                Q(customer__username__icontains=q) |
+                Q(barber__username__icontains=q) |
+                Q(customer__first_name__icontains=q) |
+                Q(customer__last_name__icontains=q) |
+                Q(barber__first_name__icontains=q) |
+                Q(barber__last_name__icontains=q)
             )
         return qs
 
     def list(self, request, *args, **kwargs):
         user = request.user
         data = []
-        for room in self.get_queryset():
-            order = room.order
+        for order in self.get_queryset():
             other = order.barber if order.customer_id == user.id else order.customer
             
-            # Agar foydalanuvchida ism-familiya kiritilgan bo'lsa, shuni ko'rsatamiz, 
-            # yo'qsa username ko'rsatamiz.
             other_name = f"{other.first_name} {other.last_name}".strip()
             if not other_name:
                 other_name = other.username
-                
-            last_msg = room.messages.order_by('-created_at').first()
-            unread = room.messages.filter(is_read=False).exclude(sender=user).count()
+            
+            # Agar chat_room yaratilmagan bo'lsa, uni on-the-fly yaratamiz yoki bo'sh qoldiramiz.
+            # Yaxshisi, shunchaki xabarlarni tekshiramiz.
+            last_msg = None
+            unread = 0
+            if hasattr(order, 'chat_room'):
+                room = order.chat_room
+                last_msg = room.messages.order_by('-created_at').first()
+                unread = room.messages.filter(is_read=False).exclude(sender=user).count()
+
             data.append({
-                'order_id': room.order_id,
+                'order_id': order.id,
                 'other_user_id': other.id,
                 'other_user_name': other_name,
                 'last_message': last_msg.text if last_msg else None,
                 'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
                 'unread_count': unread,
             })
+            
+        # Eng oxirgi xabar vaqtiga qarab saralaymiz, xabari yo'qlar eng oxirida
+        data.sort(key=lambda x: x['last_message_time'] or "", reverse=True)
         return Response(data)
 
 

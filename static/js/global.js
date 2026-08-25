@@ -166,5 +166,15 @@ function copyContactPhone() {
 
 function startChatFromContact() {
     if (!currentContactUserId) return;
+    
+    if (!localStorage.getItem('access_token')) {
+        alert("Chatdan foydalanish uchun tizimga kiring!");
+        window.location.href = '/login/';
+        return;
+    }
+    
+    // Make sure cookie is set so Django views know who we are
+    document.cookie = "access_token=" + localStorage.getItem('access_token') + "; path=/";
+    
     window.location.href = `/chat/start/${currentContactUserId}/`;
 }

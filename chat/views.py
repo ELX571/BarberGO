@@ -125,13 +125,28 @@ from django.utils import timezone
 from datetime import timedelta
 from accounts.models import Account
 
-@login_required
+from accounts.jwt_utils import verify_token, blocklisted
+
 def start_chat_view(request, user_id):
     """
     Finds or creates a dummy Order between request.user and user_id to serve as a chat room,
     then redirects to the chat page for that room.
     """
     user1 = request.user
+    
+    if not user1.is_authenticated:
+        token = request.COOKIES.get('access_token')
+        if token and not blocklisted(token):
+            payload, errors = verify_token(token)
+            if not errors and payload.get('type') == 'access':
+                try:
+                    user1 = Account.objects.get(pk=payload['user_id'])
+                except Account.DoesNotExist:
+                    pass
+                    
+    if not user1.is_authenticated:
+        return redirect('/login/')
+
     try:
         user2 = Account.objects.get(pk=user_id)
     except Account.DoesNotExist:

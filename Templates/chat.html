@@ -121,10 +121,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.innerHTML;
     }
 
+    let allRooms = [];
+    const searchInput = document.getElementById('roomSearch');
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allRooms.filter(r => 
+            (r.other_user_name || '').toLowerCase().includes(query) ||
+            String(r.order_id).includes(query)
+        );
+        renderRoomList(filtered);
+    });
+
     function loadRooms() {
         apiCall('/chat/rooms/')
             .then(res => res.ok ? res.json() : [])
             .then(rooms => {
+                allRooms = rooms;
                 if (!rooms.length) {
                     emptyMsg.style.display = 'block';
                     return;
@@ -138,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {});
     }
 
-    function renderRoomList(rooms) {
-        listPanel.innerHTML = rooms.map(r => `
+    function renderRoomList(roomsToRender) {
+        listPanel.innerHTML = roomsToRender.map(r => `
             <div class="room-item" data-order="${r.order_id}">
                 <div class="avatar-circle">${(r.other_user_name || '?').charAt(0).toUpperCase()}</div>
                 <div class="room-item-body">
@@ -157,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         listPanel.querySelectorAll('.room-item').forEach(el => {
             el.addEventListener('click', () => {
-                const room = rooms.find(r => String(r.order_id) === el.dataset.order);
+                const room = allRooms.find(r => String(r.order_id) === el.dataset.order);
                 openRoom(room);
             });
         });

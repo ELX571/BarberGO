@@ -6,6 +6,7 @@ from posts.models import Post, Comment
 class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -21,6 +22,10 @@ class PostSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         )
+
+    def get_user(self, obj):
+        from accounts.serializers import UserSerializer
+        return UserSerializer(obj.user, context=self.context).data if obj.user else None
 
     def get_likes_count(self, obj):
         return obj.likes.count()

@@ -36,6 +36,18 @@ class Account(AbstractUser):
     phone_number = models.CharField(max_length=17, default="+998")
     city=models.CharField(max_length=50, default="tashkent_sh",choices=REGION_CHOICES)
 
+    @property
+    def get_avatar_url(self):
+        try:
+            if self.avatar and hasattr(self.avatar, 'url'):
+                url = self.avatar.url
+                if url.startswith('/media/media/'):
+                    return url.replace('/media/media/', '/media/', 1)
+                return url
+        except ValueError:
+            pass
+        return '/media/avatars/default.jpg'
+
 
 class BlocklistedToken(models.Model):
     token = models.TextField( unique=True)

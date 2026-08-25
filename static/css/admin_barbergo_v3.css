@@ -1,0 +1,148 @@
+/* BarberGo Admin Absolute Light Theme */
+:root, [data-bs-theme="dark"] {
+    --bg-color: #fff7ed;
+    --card-bg: #ffffff;
+    --border-color: #fed7aa;
+    --text-primary: #1a1a2e;
+    --text-secondary: #64748b;
+    --brand-orange: #f97316;
+    --brand-hover: #ea580c;
+    --bs-body-bg: #fff7ed !important;
+    --bs-body-color: #1a1a2e !important;
+    --bs-light: #fff7ed !important;
+    --bs-dark: #1a1a2e !important;
+}
+
+html[data-bs-theme="dark"], body[data-bs-theme="dark"] {
+    background-color: #fff7ed !important;
+    color: #1a1a2e !important;
+}
+
+body, .wrapper, .content-wrapper, .main-header, .main-sidebar, .app-wrapper, .app-main {
+    background-color: #fff7ed !important;
+    color: #1a1a2e !important;
+}
+
+/* Navbar */
+.main-header, .app-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #fed7aa !important;
+}
+.main-header .nav-link, .app-header .nav-link {
+    color: #64748b !important;
+}
+
+/* Sidebar */
+.main-sidebar, .app-sidebar, #jazzy-sidebar {
+    background-color: #ffffff !important;
+    border-right: 1px solid #fed7aa !important;
+    box-shadow: none !important;
+}
+.brand-link {
+    background-color: #ffffff !important;
+    color: #f97316 !important;
+    border-bottom: 1px solid #fed7aa !important;
+    font-weight: 800 !important;
+    font-size: 1.5rem !important;
+}
+.brand-link .brand-text {
+    font-weight: 800 !important;
+    color: #f97316 !important;
+}
+.brand-link .brand-image {
+    display: none !important;
+}
+
+/* Sidebar Links */
+.nav-sidebar .nav-item > .nav-link {
+    color: #64748b !important;
+    border-radius: 0 16px 16px 0 !important;
+    margin-right: 16px !important;
+    transition: all 0.3s ease;
+}
+.nav-sidebar .nav-item > .nav-link:hover {
+    background-color: #ffedd5 !important;
+    color: #ea580c !important;
+}
+.nav-sidebar .nav-item > .nav-link.active {
+    background-color: #fff7ed !important;
+    color: #ea580c !important;
+    border-left: 5px solid #f97316 !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+}
+
+/* Cards */
+.card {
+    background-color: #ffffff !important;
+    border-radius: 20px !important;
+    border: 1px solid #fed7aa !important;
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.08) !important;
+    color: #1a1a2e !important;
+}
+.card-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #fed7aa !important;
+    border-radius: 20px 20px 0 0 !important;
+    color: #1a1a2e !important;
+}
+.card-title {
+    font-weight: 700 !important;
+    color: #1a1a2e !important;
+}
+
+/* Tables */
+.table {
+    color: #1a1a2e !important;
+}
+.table thead th {
+    border-bottom: 2px solid #fed7aa !important;
+    color: #64748b !important;
+}
+.table td, .table th {
+    border-top: 1px solid #fed7aa !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(249, 115, 22, 0.02) !important;
+}
+
+/* Inputs */
+.form-control, .select2-selection {
+    background-color: #f8fafc !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    color: #1a1a2e !important;
+    padding: 0.5rem 1rem !important;
+    height: auto !important;
+}
+.form-control:focus {
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12) !important;
+    background-color: #ffffff !important;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.2rem !important;
+    text-transform: none !important;
+}
+.btn-primary, .btn-success, .btn-info {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: 0 4px 12px -4px rgba(249, 115, 22, 0.5) !important;
+}
+.btn-primary:hover, .btn-success:hover, .btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -6px rgba(249, 115, 22, 0.6) !important;
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%) !important;
+}
+
+a {
+    color: #f97316;
+}
+a:hover {
+    color: #ea580c;
+}

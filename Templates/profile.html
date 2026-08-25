@@ -41,22 +41,22 @@ function switchProfileTab(event, panelId) {
             <div class="profile-cover"></div>
             <div class="profile-body">
                 <div style="display:flex; align-items:flex-end; justify-content:space-between;">
-                    <img src="{{ profile.get_avatar_url }}" class="p-avatar" onerror="this.src='/static/images/default_avatar.svg'">
-                    {% if is_own_profile %}
-                    <a href="#" class="edit-p-btn" style="margin-bottom:4px;"><i class="fa-solid fa-pen"></i> Tahrirlash</a>
-                    {% endif %}
+                    <img src="{{ user.get_avatar_url }}" class="p-avatar" onerror="this.src='/media/avatars/default.jpg'">
+
+                    <a href="/settings/" class="edit-p-btn" style="margin-bottom:4px;"><i class="fa-solid fa-gear"></i> Sozlamalar</a>
+
                 </div>
                 <div class="profile-name-row">
                     <div>
                         <h2 style="font-size:22px; font-weight:800; letter-spacing:-0.4px; display:flex; align-items:center; gap:6px;">
-                            Olimjon Usta
+                            {{ user.first_name|default:user.username }} {{ user.last_name }}
                             {% if profile.is_premium and profile.builder_info.has_active_subscription %}
                                 <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 18px;" title="EasyBuild Premium"></i>
                             {% elif profile.is_verified %}
                                 <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 18px;" title="Tasdiqlangan foydalanuvchi"></i>
                             {% endif %}
                         </h2>
-                        <p style="color:var(--text-muted); font-size:14px; margin-top:3px;">@{{ target_user.username }} &middot;
+                        <p style="color:var(--text-muted); font-size:14px; margin-top:3px;">@{{ user.username }} &middot;
                             <span style="color:var(--active-text-blue); font-weight:700;">Master Usta</span>
                         </p>
                         {% if profile.get_city_display %}
@@ -91,19 +91,19 @@ function switchProfileTab(event, panelId) {
             {% for post in my_posts %}
                 <div class="tweet-card" id="post-{{ post.id }}">
                     <div style="display: flex; gap: 12px; margin-bottom: 12px; position: relative;">
-                        <img src="{{ post.author.profile.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--active-text-blue);">
+                        <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--active-text-blue);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
-                                    {{ post.author.get_full_name|default:post.author.username }}
-                                    {% if post.author.profile.is_premium %}
+                                    {{ post.user.get_full_name|default:post.user.username }}
+                                    {% if post.user.profile.is_premium %}
                                         <i class="fa-solid fa-crown" style="color: #f97316; font-size: 14px; margin-left: 4px; filter: drop-shadow(0 0 4px rgba(249,115,22,0.5));" title="Premium Usta"></i>
-                                    {% elif post.author.profile.is_verified %}
+                                    {% elif post.user.profile.is_verified %}
                                         <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                     {% endif %}
                                 </strong>
                             </div>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.author.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.author.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 
@@ -296,17 +296,17 @@ function switchProfileTab(event, panelId) {
             {% for post in liked_posts %}
                 <div class="tweet-card" id="liked-card-{{ post.id }}">
                     <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-                        <img src="{{ post.author.profile.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
+                        <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
-                                {{ post.author.get_full_name|default:post.author.username }}
-                                {% if post.author.profile.is_premium %}
+                                {{ post.user.get_full_name|default:post.user.username }}
+                                {% if post.user.profile.is_premium %}
                                     <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 14px;"></i>
-                                {% elif post.author.profile.is_verified %}
+                                {% elif post.user.profile.is_verified %}
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.author.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.author.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 
@@ -336,17 +336,17 @@ function switchProfileTab(event, panelId) {
             {% for post in bookmarked_posts %}
                 <div class="tweet-card" id="bookmark-card-{{ post.id }}">
                     <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-                        <img src="{{ post.author.profile.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
+                        <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
-                                {{ post.author.get_full_name|default:post.author.username }}
-                                {% if post.author.profile.is_premium %}
+                                {{ post.user.get_full_name|default:post.user.username }}
+                                {% if post.user.profile.is_premium %}
                                     <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 14px;"></i>
-                                {% elif post.author.profile.is_verified %}
+                                {% elif post.user.profile.is_verified %}
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.author.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.author.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
                         </div>
                     </div>
 

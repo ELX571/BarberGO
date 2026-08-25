@@ -1,0 +1,99 @@
+/* BarberGo Admin Custom Styles (Light Theme) */
+
+/* General Background */
+body {
+    background-color: #fff7ed !important;
+}
+.content-wrapper {
+    background-color: transparent !important;
+}
+
+/* Navbar */
+.main-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #fed7aa !important;
+}
+
+/* Sidebar */
+.main-sidebar {
+    background-color: #ffffff !important;
+    border-right: 1px solid #fed7aa !important;
+}
+.brand-link {
+    background-color: #ffffff !important;
+    color: #f97316 !important;
+    border-bottom: 1px solid #fed7aa !important;
+    font-weight: 800 !important;
+}
+.brand-link .brand-image {
+    display: none; /* Can be removed if you have a real logo */
+}
+
+.sidebar-light-orange .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #fff7ed !important;
+    color: #ea580c !important;
+    border-left: 4px solid #f97316 !important;
+    border-radius: 0 8px 8px 0 !important;
+    font-weight: 600;
+}
+
+.sidebar-light-orange .nav-sidebar > .nav-item > .nav-link {
+    color: #475569 !important;
+    border-radius: 0 8px 8px 0 !important;
+    margin-right: 8px;
+}
+.sidebar-light-orange .nav-sidebar > .nav-item > .nav-link:hover {
+    background-color: #ffedd5 !important;
+    color: #ea580c !important;
+}
+
+/* Cards / Dashboard */
+.card {
+    border-radius: 16px !important;
+    border: 1px solid #fed7aa !important;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.05) !important;
+}
+.card-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #fed7aa !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+.card-title {
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px -4px rgba(249, 115, 22, 0.5) !important;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -6px rgba(249, 115, 22, 0.6) !important;
+}
+
+/* Form inputs */
+.form-control, .select2-selection {
+    border-radius: 10px !important;
+    border: 1.5px solid #e2e8f0 !important;
+}
+.form-control:focus, .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+/* Texts and Links */
+a {
+    color: #ea580c;
+}
+a:hover {
+    color: #c2410c;
+}
+.text-orange {
+    color: #ea580c !important;
+}
+

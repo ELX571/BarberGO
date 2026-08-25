@@ -4,6 +4,8 @@ from accounts.models import Account, VerificationCode
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = Account
         fields = (
@@ -14,8 +16,26 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'role',
             'password',
-
+            'avatar',
         )
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        if obj.avatar and hasattr(obj.avatar, 'url'):
+            try:
+                url = obj.avatar.url
+                if url.startswith('/media/media/'):
+                    url = url.replace('/media/media/', '/media/', 1)
+                if request is not None:
+                    return request.build_absolute_uri(url)
+                return url
+            except ValueError:
+                pass
+        
+        default_url = '/media/avatars/default.jpg'
+        if request is not None:
+            return request.build_absolute_uri(default_url)
+        return default_url
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

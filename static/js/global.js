@@ -41,10 +41,32 @@ function checkAuthState() {
 
         // user is logged in
         if (authLinks) {
+            let avatarUrl = "/media/avatars/default.jpg";
+            if (userDataRaw) {
+                try {
+                    const user = JSON.parse(userDataRaw);
+                    if (user.avatar) {
+                        avatarUrl = user.avatar;
+                    }
+                } catch(e) {}
+            }
+
+            let extraIcon = '';
+            if (currentPath === '/profile/') {
+                extraIcon = `
+                    <a href="#" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--border-color, #e2e8f0); background: transparent; color: var(--text-primary, #334155); font-size: 20px; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Sozlamalar">
+                        <i class="fa-solid fa-gear"></i>
+                    </a>
+                `;
+            }
+
             authLinks.innerHTML = `
-                <a href="/profile/" class="nav-profile-pic" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--accent-primary); transition: transform 0.3s ease; box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://ui-avatars.com/api/?name=Olimjon+Usta&background=f8fafc&color=ef6c00&size=100" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
-                </a>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    ${extraIcon}
+                    <a href="/profile/" class="nav-profile-pic" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--accent-primary); transition: transform 0.3s ease; box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="${avatarUrl}" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/media/avatars/default.jpg'">
+                    </a>
+                </div>
             `;
         }
     } else {

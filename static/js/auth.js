@@ -52,6 +52,50 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // CUSTOM SELECT LOGIC
+    const customSelectWrapper = document.querySelector('.custom-select-wrapper');
+    if (customSelectWrapper) {
+        const trigger = customSelectWrapper.querySelector('.select-trigger');
+        const options = customSelectWrapper.querySelectorAll('.select-option');
+        const hiddenSelect = document.getElementById('role');
+        const selectText = customSelectWrapper.querySelector('.select-text');
+
+        // Toggle open/close
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            customSelectWrapper.classList.toggle('open');
+        });
+
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                const value = option.getAttribute('data-value');
+                const text = option.querySelector('.option-text').innerText;
+                
+                // Update hidden select
+                hiddenSelect.value = value;
+                
+                // Update trigger UI
+                selectText.innerText = text;
+                trigger.classList.add('selected');
+                
+                // Update active state on options
+                options.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                // Close select
+                customSelectWrapper.classList.remove('open');
+            });
+        });
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!customSelectWrapper.contains(e.target)) {
+                customSelectWrapper.classList.remove('open');
+            }
+        });
+    }
+
     // REGISTER FORM HANDLER
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {

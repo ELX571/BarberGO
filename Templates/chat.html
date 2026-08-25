@@ -78,26 +78,99 @@
 
 /* Messages */
 .chat-messages {
-    flex: 1; overflow-y: auto; padding: 20px;
-    display: flex; flex-direction: column; gap: 8px; background: #f9fafb;
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc; /* Beautiful soft blue-gray background */
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 20px 20px; /* Subtle pattern */
 }
 .msg {
-    max-width: 70%; padding: 10px 14px;
-    font-size: 14px; line-height: 1.5; word-wrap: break-word;
+    max-width: 75%;
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
 }
 .msg.mine {
-    align-self: flex-end; background: #f97316; color: #fff;
-    border-radius: 14px 14px 4px 14px;
+    align-self: flex-end;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #fff;
+    border-radius: 18px 18px 4px 18px;
 }
 .msg.theirs {
-    align-self: flex-start; background: #fff; color: #111827;
-    border: 1px solid #e5e7eb; border-radius: 14px 14px 14px 4px;
+    align-self: flex-start;
+    background: #fff;
+    color: #1e293b;
+    border-radius: 18px 18px 18px 4px;
 }
-.msg small { display: block; font-size: 11px; margin-top: 4px; text-align: right; opacity: 0.7; }
-.msg.theirs small { text-align: left; color: #9ca3af; }
-.msg img { max-width: 100%; border-radius: 8px; margin-top: 6px; cursor: pointer; }
-.msg video { max-width: 100%; border-radius: 8px; margin-top: 6px; }
-.msg audio { width: 100%; margin-top: 6px; }
+
+/* Message Text */
+.msg-text {
+    padding: 10px 16px;
+}
+
+/* Media (Images, Videos) */
+.msg img, .msg video {
+    max-width: 100%;
+    border-radius: 14px;
+    object-fit: cover;
+}
+/* If media is the only thing or has text */
+.msg:not(.has-text) img, .msg:not(.has-text) video {
+    border-radius: 18px 18px 4px 18px; /* mine default */
+}
+.msg.theirs:not(.has-text) img, .msg.theirs:not(.has-text) video {
+    border-radius: 18px 18px 18px 4px;
+}
+.msg.has-text img, .msg.has-text video {
+    border-radius: 14px 14px 4px 4px;
+    margin-bottom: -8px; /* overlap with text padding */
+}
+
+/* Audio Player */
+.msg audio {
+    width: 260px;
+    height: 44px;
+    border-radius: 22px;
+    margin: 8px;
+}
+.msg.mine audio {
+    filter: invert(1) hue-rotate(180deg); /* Make audio player fit dark bg */
+}
+
+/* Time & Checks */
+.msg small {
+    align-self: flex-end;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px 8px 12px;
+}
+.msg.theirs small {
+    align-self: flex-start;
+    color: #94a3b8;
+}
+.msg:not(.has-text) small {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+}
 
 /* Input Row */
 .chat-input-row {
@@ -319,10 +392,9 @@ document.addEventListener('DOMContentLoaded', () => {
         div.className = 'msg ' + (isMine ? 'mine' : 'theirs');
         
         if (data.text) {
-            const textEl = document.createElement('div');
-            textEl.textContent = data.text;
-            div.appendChild(textEl);
+            div.classList.add('has-text');
         }
+        
         if (data.image) {
             const img = document.createElement('img');
             img.src = data.image;
@@ -343,8 +415,15 @@ document.addEventListener('DOMContentLoaded', () => {
             div.appendChild(aud);
         }
 
+        if (data.text) {
+            const textEl = document.createElement('div');
+            textEl.className = 'msg-text';
+            textEl.textContent = data.text;
+            div.appendChild(textEl);
+        }
+
         const meta = document.createElement('small');
-        meta.textContent = formatTime(data.created_at) + (isMine ? ' ✓' : '');
+        meta.innerHTML = formatTime(data.created_at) + (isMine ? ' <i class="fa-solid fa-check-double" style="font-size:10px;"></i>' : '');
         div.appendChild(meta);
         messagesEl.appendChild(div);
         messagesEl.scrollTop = messagesEl.scrollHeight;

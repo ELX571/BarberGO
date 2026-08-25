@@ -385,8 +385,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         apiCall(`/chat/${room.order_id}/messages/`)
             .then(res => res.ok ? res.json() : [])
-            .then(messages => messages.forEach(appendMessage))
-            .catch(() => {});
+            .then(data => {
+                const messages = Array.isArray(data) ? data : (data.results || []);
+                messages.forEach(appendMessage);
+            })
+            .catch(err => console.error('Chat history error:', err));
 
         const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
         socket = new WebSocket(`${wsProtocol}://${location.host}/ws/chat/${room.order_id}/?token=${token}`);

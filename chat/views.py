@@ -17,6 +17,7 @@ def chat_page(request, order_id=None):
 class ChatHistoryView(generics.ListAPIView):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         order = Order.objects.get(id=self.kwargs['order_id'])
@@ -69,11 +70,22 @@ class MyChatRoomsView(generics.ListAPIView):
                 last_msg = room.messages.order_by('-created_at').first()
                 unread = room.messages.filter(is_read=False).exclude(sender=user).count()
 
+            last_msg_text = None
+            if last_msg:
+                if last_msg.text:
+                    last_msg_text = last_msg.text
+                elif last_msg.image:
+                    last_msg_text = "📷 Rasm"
+                elif last_msg.video:
+                    last_msg_text = "🎥 Video"
+                elif last_msg.voice:
+                    last_msg_text = "🎤 Ovozli xabar"
+
             data.append({
                 'order_id': order.id,
                 'other_user_id': other.id,
                 'other_user_name': other_name,
-                'last_message': last_msg.text if last_msg else None,
+                'last_message': last_msg_text,
                 'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
                 'unread_count': unread,
             })

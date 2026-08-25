@@ -139,7 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.ok ? res.json() : [])
             .then(rooms => {
                 allRooms = rooms;
-                if (!rooms.length && !query) {
+                if (!rooms.length) {
+                    if (query) {
+                        emptyMsg.innerHTML = "Hech narsa topilmadi.";
+                    } else {
+                        emptyMsg.innerHTML = "Hozircha suhbatlar yo'q.";
+                    }
                     emptyMsg.style.display = 'block';
                     listPanel.innerHTML = '';
                     return;

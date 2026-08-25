@@ -23,6 +23,31 @@ function switchProfileTab(event, panelId) {
         target.classList.add('active-panel');
     }
 }
+
+async function removeBookmarkInline(postId) {
+    if (!tk) {
+        window.location.href = '/login/';
+        return;
+    }
+    try {
+        const response = await fetch(`/posts/posts/${postId}/bookmark/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${tk}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            const card = document.getElementById(`bookmark-card-${postId}`);
+            if (card) {
+                card.remove();
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
 </script>
 {% endblock %}
 

@@ -21,10 +21,12 @@ def profile_view(request):
     if user.is_authenticated:
         my_posts = Post.objects.filter(user=user).order_by('-created_at')
         liked_posts = Post.objects.filter(likes=user).order_by('-created_at')
+        bookmarked_posts = Post.objects.filter(bookmarks=user).order_by('-created_at')
         is_own_profile = True
     else:
         my_posts = []
         liked_posts = []
+        bookmarked_posts = []
         is_own_profile = False
         
     context = {
@@ -32,7 +34,7 @@ def profile_view(request):
         'user': user,
         'my_posts': my_posts,
         'liked_posts': liked_posts,
-        'bookmarked_posts': [],
+        'bookmarked_posts': bookmarked_posts,
         'profile': {},
     }
     return render(request, 'profile.html', context)

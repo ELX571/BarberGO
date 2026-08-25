@@ -51,7 +51,6 @@ ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', [])
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,7 +64,6 @@ INSTALLED_APPS = [
     'posts',
     'orders',
     'notifications',
-    'face_ai',
 
     #rd
     'rest_framework',
@@ -215,78 +213,4 @@ CHANNEL_LAYERS = {
             "hosts": [(CHANNEL_LAYERS_HOST, CHANNEL_LAYERS_PORT)],
         },
     },
-}
-
-# Jazzmin settings
-JAZZMIN_SETTINGS = {
-    "site_title": "BarberGo Admin",
-    "site_header": "BarberGo",
-    "site_brand": "BarberGo",
-    # "site_logo": "images/logo.png", # add this later if there is an asset
-    "login_logo": None,
-    "site_logo_classes": "img-circle",
-    "site_icon": None,
-    "welcome_sign": "BarberGo Admin paneliga xush kelibsiz",
-    "copyright": "BarberGo",
-    "search_model": ["accounts.Account", "posts.Post"],
-    "user_avatar": None,
-    "topmenu_links": [
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Saytga qaytish", "url": "/", "new_window": True},
-    ],
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "accounts.Account": "fas fa-user-circle",
-        "posts.Post": "fas fa-cut",
-        "posts.Comment": "fas fa-comments",
-        "orders.Order": "fas fa-shopping-cart",
-        "notifications.Notifications": "fas fa-bell",
-    },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-    "related_modal_active": True,
-    "custom_css": "css/admin_barbergo_v3.css",
-    "custom_js": "js/admin_barbergo_v3.js",
-    "show_ui_builder": False,
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
-}
-
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-white",
-    "accent": "accent-orange",
-    "navbar": "navbar-white navbar-light",
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-light-orange",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": True,
-    "theme": "litera",
-    "dark_mode_theme": None,
-    "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-outline-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
-    },
-    "actions_sticky_top": False
 }

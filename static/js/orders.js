@@ -122,6 +122,7 @@ function renderOrders() {
                 </button>
             `;
         }
+        actionsHtml += `<a href="/chat/${order.id}/" class="action-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">💬 Chat</a>`;
 
         return `
             <div class="order-card" data-status="${order.status}">
@@ -257,3 +258,4 @@ function closeOrderModal() {
 document.getElementById('orderModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'orderModal') closeOrderModal();
 });
+

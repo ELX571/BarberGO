@@ -93,9 +93,6 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     username=serializers.CharField(source='user.username', read_only=True)
 
-    def comments_count(self, obj):
-        return obj.comments.count()
-
     class Meta:
         model = Comment
         fields = (

@@ -195,11 +195,15 @@ window.openCommentsModalGlobal = async function(postId) {
 };
 
 window.closeCommentsModal = function(e) {
-    if (e && e.target !== e.currentTarget && !e.target.closest('button')) return;
-    document.getElementById('commentsModalOverlay').style.display = 'none';
+    // Only close if clicking exactly on the overlay, or explicitly called without an event (e.g. from the X button)
+    if (e && e.target !== e.currentTarget) return;
+    
+    const overlay = document.getElementById('commentsModalOverlay');
+    if (overlay) overlay.style.display = 'none';
     document.body.style.overflow = '';
     currentCommentPostId = null;
-    document.getElementById('commentInput').value = '';
+    const input = document.getElementById('commentInput');
+    if (input) input.value = '';
 };
 
 async function loadComments() {

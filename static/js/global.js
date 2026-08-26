@@ -216,21 +216,29 @@ async function loadComments() {
             return;
         }
         
-        list.innerHTML = comments.map(c => `
-            <div style="background: #f9fafb; padding: 12px; border-radius: 12px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                    <strong style="font-size: 13px; color: #111827;">${c.username || 'Foydalanuvchi'}</strong>
-                    <span style="font-size: 11px; color: #9ca3af;">${new Date(c.created_at).toLocaleString()}</span>
+        list.innerHTML = comments.map(c => {
+            const dateObj = new Date(c.created_at);
+            const timeStr = dateObj.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = dateObj.toLocaleDateString('uz-UZ', { day: 'numeric', month: 'short' });
+            
+            return `
+            <div style="display: flex; gap: 12px; margin-bottom: 4px; padding: 4px 0;">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.username || 'U')}&background=f97316&color=fff&rounded=true&size=128" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" alt="${c.username}">
+                <div style="flex: 1; background: #f3f4f6; padding: 10px 14px; border-radius: 4px 16px 16px 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                        <strong style="font-size: 14px; color: #111827;">${c.username || 'Foydalanuvchi'}</strong>
+                        <span style="font-size: 11px; color: #6b7280; white-space: nowrap; margin-left: 8px;">${dateStr}, ${timeStr}</span>
+                    </div>
+                    <div style="font-size: 14px; color: #374151; line-height: 1.4; word-break: break-word;">${c.text}</div>
                 </div>
-                <div style="font-size: 14px; color: #374151;">${c.text}</div>
             </div>
-        `).join('');
+        `}).join('');
         
         // Scroll to bottom
         list.scrollTop = list.scrollHeight;
-        
-    } catch(err) {
-        list.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Xatolik yuz berdi.</div>';
+    } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Izohlarni yuklashda xatolik.</div>';
     }
 }
 

@@ -163,7 +163,11 @@ async function removeBookmarkInline(postId) {
                     {% if post.price %}<div class="tweet-price-badge"><i class="fa-solid fa-wallet"></i> {{ post.price }} UZS</div>{% endif %}
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Usta{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
                     <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
                         <div style="display:flex; gap:16px;">
                             <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
@@ -222,7 +226,11 @@ async function removeBookmarkInline(postId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Usta{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
                     <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
                         <div style="display:flex; gap:16px;">
                             <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
@@ -279,7 +287,11 @@ async function removeBookmarkInline(postId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Usta{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
                     <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
                         <div style="display:flex; gap:16px;">
                             <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">

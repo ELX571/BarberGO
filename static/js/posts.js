@@ -102,6 +102,12 @@ function resolveMediaUrl(url) {
 }
 
 function createPostCard(post) {
+    let currentUserId = null;
+    try {
+        const uData = JSON.parse(localStorage.getItem('user_data'));
+        if (uData && uData.id) currentUserId = uData.id;
+    } catch(e) {}
+    
     const userObj = post.user || {};
     const title = post.title || post.name || 'Barber Post';
     const excerpt = post.description || post.text || post.content || 'Check out this awesome barber style.';
@@ -149,10 +155,11 @@ function createPostCard(post) {
                         <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
                     </button>
                 </div>
-
+                ${(currentUserId !== userObj.id) ? `
                 <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}', '${avatarUrl}')">
-                    <i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish
+                    <i class="fa-solid fa-phone" style="font-size:14px;"></i> ${userObj.role === 'customer' ? "Mijoz bilan bog'lanish" : "Usta bilan bog'lanish"}
                 </button>
+                ` : ''}
             </div>
         </div>
     `;

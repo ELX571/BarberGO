@@ -6,7 +6,7 @@
 <script>
     // Sync localStorage token to cookie if Django missed it
     const tk = localStorage.getItem('access_token');
-    const isAuth = "{{ is_own_profile|yesno:'true,false' }}" === "true";
+    const isAuth = "{{ is_authenticated|yesno:'true,false' }}" === "true";
     if (tk && !isAuth) {
         let cookieTk = null;
         document.cookie.split(';').forEach(c => {
@@ -68,7 +68,7 @@ async function removeBookmarkInline(postId) {
 <div class="profile-container">
 
         <div class="profile-top-navigation">
-            <a href="#" class="back-market-btn"><i class="fa-solid fa-arrow-left"></i> Ortga</a>
+            <a href="/" class="back-market-btn"><i class="fa-solid fa-arrow-left"></i> Ortga</a>
             {% if is_own_profile %}
             <button id="notifToggleBtn" class="profile-theme-toggle" onclick="openNotificationsPanel()">
                 <i class="fa-solid fa-bell"></i>
@@ -136,7 +136,7 @@ async function removeBookmarkInline(postId) {
         <div class="tab-content-panel active-panel" id="my-posts-panel">
             {% for post in my_posts %}
                 <div class="tweet-card" id="post-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px; position: relative;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; position: relative; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--active-text-blue);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <div style="display: flex; align-items: center; gap: 6px;">
@@ -151,7 +151,7 @@ async function removeBookmarkInline(postId) {
                             </div>
                             <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}
@@ -199,7 +199,7 @@ async function removeBookmarkInline(postId) {
         <div class="tab-content-panel" id="liked-posts-panel">
             {% for post in liked_posts %}
                 <div class="tweet-card" id="liked-card-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
@@ -212,7 +212,7 @@ async function removeBookmarkInline(postId) {
                             </strong>
                             <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}
@@ -256,7 +256,7 @@ async function removeBookmarkInline(postId) {
         <div class="tab-content-panel" id="bookmarked-posts-panel">
             {% for post in bookmarked_posts %}
                 <div class="tweet-card" id="bookmark-card-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
@@ -269,7 +269,7 @@ async function removeBookmarkInline(postId) {
                             </strong>
                             <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}

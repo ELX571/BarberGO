@@ -126,24 +126,26 @@ function createPostCard(post) {
             <div class="post-content">
                 <h3 class="post-title">${title}</h3>
                 <p class="post-excerpt">${excerpt}</p>
-                <div class="post-meta" style="display:flex; align-items:center; gap:8px;">
-                    <img src="${avatarUrl}" alt="avatar" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random'">
-                    <span style="font-weight: 500;">${authorName}</span>
-                    <span style="margin-left:auto; color:var(--text-muted); font-size:12px;">${date}</span>
+                <div class="post-meta" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <a href="/profile/${userObj.id}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+                        <img src="${avatarUrl}" alt="avatar" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random'">
+                        <span class="author" style="font-weight:600;">${authorName}</span>
+                    </a>
+                    <span class="date" style="color:var(--text-muted); font-size:12px;">${date}</span>
                 </div>
                 
                 <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
                     <div style="display:flex; gap:16px;">
-                        <button class="post-action-btn" onclick="togglePostLike(${post.id})" id="home-like-btn-${post.id}" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isLiked ? '#ef4444' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                        <button class="post-action-btn post-like-btn-${post.id}" onclick="togglePostLikeGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isLiked ? '#ef4444' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
                             <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i>
-                            <span id="home-like-count-${post.id}">${likesCount}</span>
+                            <span class="like-count">${likesCount}</span>
                         </button>
-                        <button class="post-action-btn" onclick="openCommentsModal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                        <button class="post-action-btn post-comment-btn-${post.id}" onclick="openCommentsModalGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
                             <i class="fa-regular fa-comment"></i>
-                            <span id="home-comment-count-${post.id}">${commentsCount}</span>
+                            <span class="comment-count">${commentsCount}</span>
                         </button>
                     </div>
-                    <button class="post-action-btn" onclick="togglePostBookmark(${post.id})" id="home-bookmark-btn-${post.id}" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isBookmarked ? '#3b82f6' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                    <button class="post-action-btn post-bookmark-btn-${post.id}" onclick="togglePostBookmarkGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isBookmarked ? '#3b82f6' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
                         <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
                     </button>
                 </div>
@@ -250,54 +252,5 @@ async function fetchRecommendedPosts() {
     } catch (error) {
         console.error('Error fetching recommended posts:', error);
         if (grid) grid.innerHTML = '<p style="padding: 20px; color: var(--text-secondary); grid-column: 1/-1; text-align: center;">Xatolik yuz berdi.</p>';
-    }
-}
-
-// ========== POST ACTIONS ==========
-async function togglePostLike(postId) {
-    try {
-        const btn = document.getElementById(`home-like-btn-${postId}`);
-        const icon = btn.querySelector('i');
-        const countSpan = document.getElementById(`home-like-count-${postId}`);
-        
-        const res = await apiCall(`/posts/posts/${postId}/like/`, { method: 'POST' });
-        if (!res.ok) throw new Error("Failed to toggle like");
-        const data = await res.json();
-        
-        countSpan.textContent = data.likes;
-        if (data.like) {
-            icon.className = 'fa-solid fa-heart';
-            btn.style.color = '#ef4444';
-        } else {
-            icon.className = 'fa-regular fa-heart';
-            btn.style.color = '#6b7280';
-        }
-    } catch(e) { console.error(e); }
-}
-
-async function togglePostBookmark(postId) {
-    try {
-        const btn = document.getElementById(`home-bookmark-btn-${postId}`);
-        const icon = btn.querySelector('i');
-        
-        const res = await apiCall(`/posts/posts/${postId}/bookmark/`, { method: 'POST' });
-        if (!res.ok) throw new Error("Failed to toggle bookmark");
-        const data = await res.json();
-        
-        if (data.bookmarked) {
-            icon.className = 'fa-solid fa-bookmark';
-            btn.style.color = '#3b82f6';
-        } else {
-            icon.className = 'fa-regular fa-bookmark';
-            btn.style.color = '#6b7280';
-        }
-    } catch(e) { console.error(e); }
-}
-
-function openCommentsModal(postId) {
-    if (typeof openCommentsModalGlobal === 'function') {
-        openCommentsModalGlobal(postId);
-    } else {
-        console.error('Comments modal not initialized.');
     }
 }

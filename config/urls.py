@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from config.views import profile_view
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_yasg import openapi
@@ -36,7 +37,8 @@ urlpatterns = [
     path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
     path('hairstyles/', TemplateView.as_view(template_name='hairstyles.html'), name='hairstyles'),
     path('chat/', include('chat.urls')),
-    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+    path('profile/', profile_view, name='profile'),
+    path('profile/<int:user_id>/', profile_view, name='public-profile'),
 ]
 
 if settings.DEBUG:

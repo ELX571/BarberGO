@@ -253,11 +253,13 @@ window.submitComment = async function() {
         input.value = '';
         await loadComments();
         
-        // Update comment count on UI
-        const countSpan = document.getElementById(`home-comment-count-${currentCommentPostId}`);
-        if (countSpan && data.comments_count !== undefined) {
-            countSpan.textContent = data.comments_count;
-        }
+        // Update all comment counts on UI
+        document.querySelectorAll(`.post-comment-btn-${currentCommentPostId}`).forEach(btn => {
+            const countSpan = btn.querySelector('.comment-count');
+            if (countSpan && data.comments_count !== undefined) {
+                countSpan.textContent = data.comments_count;
+            }
+        });
         
     } catch (err) {
         alert("Izoh yuborishda xatolik yuz berdi.");
@@ -265,4 +267,48 @@ window.submitComment = async function() {
         input.disabled = false;
         input.focus();
     }
+};
+
+window.togglePostLikeGlobal = async function(postId) {
+    try {
+        const res = await apiCall(`/posts/posts/${postId}/like/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle like");
+        const data = await res.json();
+        
+        // Update all like buttons for this post on the page
+        document.querySelectorAll(`.post-like-btn-${postId}`).forEach(btn => {
+            const icon = btn.querySelector('i');
+            const countSpan = btn.querySelector('.like-count');
+            if (countSpan) countSpan.textContent = data.likes;
+            
+            if (data.like) {
+                icon.className = 'fa-solid fa-heart';
+                btn.style.color = '#ef4444';
+            } else {
+                icon.className = 'fa-regular fa-heart';
+                btn.style.color = '#6b7280';
+            }
+        });
+    } catch(e) { console.error(e); }
+};
+
+window.togglePostBookmarkGlobal = async function(postId) {
+    try {
+        const res = await apiCall(`/posts/posts/${postId}/bookmark/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle bookmark");
+        const data = await res.json();
+        
+        // Update all bookmark buttons for this post on the page
+        document.querySelectorAll(`.post-bookmark-btn-${postId}`).forEach(btn => {
+            const icon = btn.querySelector('i');
+            
+            if (data.bookmarked) {
+                icon.className = 'fa-solid fa-bookmark';
+                btn.style.color = '#3b82f6';
+            } else {
+                icon.className = 'fa-regular fa-bookmark';
+                btn.style.color = '#6b7280';
+            }
+        });
+    } catch(e) { console.error(e); }
 };

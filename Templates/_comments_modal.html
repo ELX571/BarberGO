@@ -14,7 +14,7 @@
 
         <!-- Comment Input -->
         <div style="border-top: 1px solid #f3f4f6; padding-top: 16px; display: flex; gap: 8px;">
-            <input type="text" id="commentInput" placeholder="Izoh yozing..." style="flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 10px 16px; outline: none; font-size: 14px;">
+            <input type="text" id="commentInput" placeholder="Izoh yozing..." style="flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 10px 16px; outline: none; font-size: 14px;" onkeypress="if(event.key === 'Enter') submitComment()">
             <button onclick="submitComment()" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
                 <i class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i>
             </button>

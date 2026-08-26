@@ -12,8 +12,20 @@
             <div style="text-align: center; color: #9ca3af; margin-top: 20px;">Yuklanmoqda...</div>
         </div>
 
+        <!-- Quick Emojis -->
+        <div style="display: flex; gap: 12px; padding: 0 4px 12px; border-top: 1px solid #f3f4f6; padding-top: 12px; overflow-x: auto; scrollbar-width: none;">
+            <button onclick="addEmoji('👍')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">👍</button>
+            <button onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">❤️</button>
+            <button onclick="addEmoji('🔥')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">🔥</button>
+            <button onclick="addEmoji('😂')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">😂</button>
+            <button onclick="addEmoji('😍')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">😍</button>
+            <button onclick="addEmoji('🙌')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">🙌</button>
+            <button onclick="addEmoji('👏')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">👏</button>
+            <button onclick="addEmoji('💯')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">💯</button>
+        </div>
+
         <!-- Comment Input -->
-        <div style="border-top: 1px solid #f3f4f6; padding-top: 16px; display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px;">
             <input type="text" id="commentInput" placeholder="Izoh yozing..." style="flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 10px 16px; outline: none; font-size: 14px;" onkeypress="if(event.key === 'Enter') submitComment()">
             <button onclick="submitComment()" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
                 <i class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i>
@@ -21,3 +33,10 @@
         </div>
     </div>
 </div>
+<script>
+function addEmoji(emoji) {
+    const input = document.getElementById('commentInput');
+    input.value += emoji;
+    input.focus();
+}
+</script>

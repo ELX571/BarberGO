@@ -164,18 +164,30 @@ async function removeBookmarkInline(postId) {
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
                     <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
-                    <div class="tweet-manage-toolbar">
-                        <div class="tweet-stats">
-                            <span><i class="fa-solid fa-heart" style="color: #ef4444;"></i> {{ post.likes.count|default:0 }}</span>
-                            <span><i class="fa-solid fa-bookmark" style="color: #3b82f6;"></i> {{ post.bookmarks.count }}</span>
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
                         </div>
-                        {% if is_own_profile %}
-                        <div class="tweet-manage-actions">
-                            <a href="#" class="manage-btn edit"><i class="fa-solid fa-pen"></i> Tahrirlash</a>
-                            <button class="manage-btn delete" onclick="openDeleteModal('#')"><i class="fa-solid fa-trash"></i> O'chirish</button>
-                        </div>
-                        {% endif %}
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
                     </div>
+
+                    {% if is_own_profile %}
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
+                        <div class="tweet-manage-actions" style="width: 100%;">
+                            <a href="#" class="manage-btn edit" style="width: 50%; justify-content: center;"><i class="fa-solid fa-pen"></i> Tahrirlash</a>
+                            <button class="manage-btn delete" onclick="openDeleteModal('#')" style="width: 50%; justify-content: center;"><i class="fa-solid fa-trash"></i> O'chirish</button>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             {% empty %}
                 <div class="no-data-msg" style="text-align:center; padding: 40px; color: var(--text-muted);">Siz hali biror marta e'lon joylashtirmadingiz.</div>
@@ -211,9 +223,25 @@ async function removeBookmarkInline(postId) {
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
                     <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
-                    <div class="tweet-manage-toolbar">
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                         <div class="tweet-manage-actions" style="width: 100%;">
-                            <button class="manage-btn delete" onclick="removeLikeInline('{{ post.id }}')" style="width: 100%;">
+                            <button class="manage-btn delete" onclick="removeLikeInline('{{ post.id }}')" style="width: 100%; justify-content: center;">
                                 <i class="fa-solid fa-heart-broken"></i> Ro'yxatdan olib tashlash
                             </button>
                         </div>
@@ -252,9 +280,25 @@ async function removeBookmarkInline(postId) {
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
                     <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')"><i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish</button>
-                    <div class="tweet-manage-toolbar">
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                         <div class="tweet-manage-actions" style="width: 100%;">
-                            <button class="manage-btn" onclick="removeBookmarkInline('{{ post.id }}')" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <button class="manage-btn" onclick="removeBookmarkInline('{{ post.id }}')" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2); justify-content: center;">
                                 <i class="fa-regular fa-bookmark"></i> Saqlashni bekor qilish
                             </button>
                         </div>

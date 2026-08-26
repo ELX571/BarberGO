@@ -183,3 +183,86 @@ function startChatFromContact() {
     
     window.location.href = `/chat/start/${currentContactUserId}/`;
 }
+
+// ========== COMMENTS MODAL ==========
+let currentCommentPostId = null;
+
+window.openCommentsModalGlobal = async function(postId) {
+    currentCommentPostId = postId;
+    document.getElementById('commentsModalOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    await loadComments();
+};
+
+window.closeCommentsModal = function(e) {
+    if (e && e.target !== e.currentTarget && !e.target.closest('button')) return;
+    document.getElementById('commentsModalOverlay').style.display = 'none';
+    document.body.style.overflow = '';
+    currentCommentPostId = null;
+    document.getElementById('commentInput').value = '';
+};
+
+async function loadComments() {
+    const list = document.getElementById('commentsList');
+    list.innerHTML = '<div style="text-align: center; color: #9ca3af; margin-top: 20px;">Yuklanmoqda...</div>';
+    
+    try {
+        const res = await apiCall(`/posts/posts/${currentCommentPostId}/get_comment/`);
+        if (!res.ok) throw new Error("Failed to load comments");
+        const comments = await res.json();
+        
+        if (comments.length === 0) {
+            list.innerHTML = '<div style="text-align: center; color: #9ca3af; margin-top: 20px;">Hali izohlar yo\'q. Birinchi bo\'lib izoh yozing!</div>';
+            return;
+        }
+        
+        list.innerHTML = comments.map(c => `
+            <div style="background: #f9fafb; padding: 12px; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <strong style="font-size: 13px; color: #111827;">${c.username || 'Foydalanuvchi'}</strong>
+                    <span style="font-size: 11px; color: #9ca3af;">${new Date(c.created_at).toLocaleString()}</span>
+                </div>
+                <div style="font-size: 14px; color: #374151;">${c.text}</div>
+            </div>
+        `).join('');
+        
+        // Scroll to bottom
+        list.scrollTop = list.scrollHeight;
+        
+    } catch(err) {
+        list.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Xatolik yuz berdi.</div>';
+    }
+}
+
+window.submitComment = async function() {
+    if (!currentCommentPostId) return;
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    input.disabled = true;
+    try {
+        const res = await apiCall(`/posts/posts/${currentCommentPostId}/comment/`, {
+            method: 'POST',
+            body: JSON.stringify({ text })
+        });
+        
+        if (!res.ok) throw new Error("Failed to post comment");
+        const data = await res.json();
+        
+        input.value = '';
+        await loadComments();
+        
+        // Update comment count on UI
+        const countSpan = document.getElementById(`home-comment-count-${currentCommentPostId}`);
+        if (countSpan && data.comments_count !== undefined) {
+            countSpan.textContent = data.comments_count;
+        }
+        
+    } catch (err) {
+        alert("Izoh yuborishda xatolik yuz berdi.");
+    } finally {
+        input.disabled = false;
+        input.focus();
+    }
+};

@@ -12,7 +12,7 @@
     <!-- AOS Animation CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=18">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=19">
     <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}?v=15">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     {% block extra_css %}{% endblock %}
@@ -119,7 +119,7 @@
 
 <!-- Scripts -->
 <script src="{% static 'js/ai_chat.js' %}?v=13"></script>
-<script src="{% static 'js/global.js' %}?v=9"></script>
+<script src="{% static 'js/global.js' %}?v=11"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     // Global Toast Logic
@@ -165,5 +165,6 @@
 </script>
 {% block extra_js %}{% endblock %}
     {% include "_contact_modal.html" %}
+    {% include "_comments_modal.html" %}
 </body>
 </html>

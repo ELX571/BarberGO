@@ -1,0 +1,23 @@
+<!-- Comments Modal -->
+<div class="contact-modal-overlay" id="commentsModalOverlay" style="display:none;" onclick="closeCommentsModal(event)">
+    <div class="contact-modal" style="width: 100%; max-width: 500px; display: flex; flex-direction: column; height: 80vh; max-height: 600px;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 18px; color: #111827;">Fikrlar (Izohlar)</h3>
+            <button onclick="closeCommentsModal(event)" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280; padding:4px;">&times;</button>
+        </div>
+
+        <!-- Comments List -->
+        <div id="commentsList" style="flex: 1; overflow-y: auto; padding-right: 8px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="text-align: center; color: #9ca3af; margin-top: 20px;">Yuklanmoqda...</div>
+        </div>
+
+        <!-- Comment Input -->
+        <div style="border-top: 1px solid #f3f4f6; padding-top: 16px; display: flex; gap: 8px;">
+            <input type="text" id="commentInput" placeholder="Izoh yozing..." style="flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 10px 16px; outline: none; font-size: 14px;">
+            <button onclick="submitComment()" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                <i class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i>
+            </button>
+        </div>
+    </div>
+</div>

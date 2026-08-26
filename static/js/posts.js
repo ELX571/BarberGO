@@ -114,6 +114,12 @@ function createPostCard(post) {
     const avatarUrl = userObj.avatar || '/media/avatars/default.jpg';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString() : 'Recently';
 
+    const likesCount = post.likes_count || 0;
+    const isLiked = post.is_liked || false;
+    const commentsCount = post.comments_count || 0;
+    const bookmarksCount = post.bookmarks_count || 0;
+    const isBookmarked = post.is_bookmarked || false;
+
     return `
         <div class="post-card glass-panel fade-in" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
             <img src="${imageUrl}" alt="${title}" class="post-image" onerror="this.src='https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
@@ -125,7 +131,24 @@ function createPostCard(post) {
                     <span style="font-weight: 500;">${authorName}</span>
                     <span style="margin-left:auto; color:var(--text-muted); font-size:12px;">${date}</span>
                 </div>
-                <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}')">
+                
+                <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                    <div style="display:flex; gap:16px;">
+                        <button class="post-action-btn" onclick="togglePostLike(${post.id})" id="home-like-btn-${post.id}" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isLiked ? '#ef4444' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                            <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i>
+                            <span id="home-like-count-${post.id}">${likesCount}</span>
+                        </button>
+                        <button class="post-action-btn" onclick="openCommentsModal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                            <i class="fa-regular fa-comment"></i>
+                            <span id="home-comment-count-${post.id}">${commentsCount}</span>
+                        </button>
+                    </div>
+                    <button class="post-action-btn" onclick="togglePostBookmark(${post.id})" id="home-bookmark-btn-${post.id}" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isBookmarked ? '#3b82f6' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                    </button>
+                </div>
+
+                <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}', '${avatarUrl}')">
                     <i class="fa-solid fa-phone" style="font-size:14px;"></i> Usta bilan bog'lanish
                 </button>
             </div>
@@ -227,5 +250,54 @@ async function fetchRecommendedPosts() {
     } catch (error) {
         console.error('Error fetching recommended posts:', error);
         if (grid) grid.innerHTML = '<p style="padding: 20px; color: var(--text-secondary); grid-column: 1/-1; text-align: center;">Xatolik yuz berdi.</p>';
+    }
+}
+
+// ========== POST ACTIONS ==========
+async function togglePostLike(postId) {
+    try {
+        const btn = document.getElementById(`home-like-btn-${postId}`);
+        const icon = btn.querySelector('i');
+        const countSpan = document.getElementById(`home-like-count-${postId}`);
+        
+        const res = await apiCall(`/posts/posts/${postId}/like/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle like");
+        const data = await res.json();
+        
+        countSpan.textContent = data.likes;
+        if (data.like) {
+            icon.className = 'fa-solid fa-heart';
+            btn.style.color = '#ef4444';
+        } else {
+            icon.className = 'fa-regular fa-heart';
+            btn.style.color = '#6b7280';
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function togglePostBookmark(postId) {
+    try {
+        const btn = document.getElementById(`home-bookmark-btn-${postId}`);
+        const icon = btn.querySelector('i');
+        
+        const res = await apiCall(`/posts/posts/${postId}/bookmark/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle bookmark");
+        const data = await res.json();
+        
+        if (data.bookmarked) {
+            icon.className = 'fa-solid fa-bookmark';
+            btn.style.color = '#3b82f6';
+        } else {
+            icon.className = 'fa-regular fa-bookmark';
+            btn.style.color = '#6b7280';
+        }
+    } catch(e) { console.error(e); }
+}
+
+function openCommentsModal(postId) {
+    if (typeof openCommentsModalGlobal === 'function') {
+        openCommentsModalGlobal(postId);
+    } else {
+        console.error('Comments modal not initialized.');
     }
 }

@@ -131,7 +131,7 @@ function openContactModal(userId, name, phone, avatarUrl) {
     currentContactUserId = userId;
     currentContactPhone = phone;
     
-    document.getElementById('contactModalName').innerText = name || "Usta";
+    document.getElementById('contactModalName').innerText = name || "Barber";
     
     const avatarImg = document.getElementById('contactModalAvatar');
     if (avatarImg) {

@@ -39,9 +39,7 @@ class Posts(viewsets.GenericViewSet):
 
             ).filter(Q(similarity_title__gt=0.3) | Q(similarity_description__gt=0.3) | Q(similarity_user__gt=0.3)).order_by('-created_at')
 
-            return posts
-
-
+        return posts
 
     def list(self, request):
         posts = Post.objects.all().order_by('-created_at')

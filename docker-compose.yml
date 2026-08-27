@@ -38,6 +38,21 @@ services:
     networks:
       - barbergo_network
 
+  celery:
+    image: ${DOCKERHUB_USERNAME}/barbergo:latest
+    container_name: barbergo_celery
+    restart: always
+    command: celery -A config worker -l info
+    env_file:
+      - .env
+    volumes:
+      - media_data:/app/media
+    depends_on:
+      - db
+      - redis
+    networks:
+      - barbergo_network
+
 volumes:
   postgres_data:
   redis_data:

@@ -65,7 +65,7 @@ function checkAuthState() {
                 <div style="display: flex; align-items: center; gap: 10px;">
                     ${extraIcon}
                     <a href="/profile/" class="nav-profile-pic" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--accent-primary); transition: transform 0.3s ease; box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        <img src="${avatarUrl}" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/media/avatars/default.jpg'">
+                        <img src="${avatarUrl}" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                     </a>
                 </div>
             `;

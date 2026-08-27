@@ -61,3 +61,4 @@ wcwidth==0.8.2
 zope.interface==8.5
 django-jazzmin==3.0.1
 gunicorn==26.2.0
+whitenoise==6.7.0

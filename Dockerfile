@@ -20,6 +20,8 @@ EXPOSE 8000
 ARG BUILD_VERSION=latest
 RUN echo "Version: $BUILD_VERSION"
 
+RUN python manage.py collectstatic --noinput
+
 RUN useradd -m appuser
 USER appuser
 

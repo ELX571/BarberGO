@@ -124,10 +124,10 @@ jobs:
             export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             
             echo "1. Eng yangi Docker image yuklab olinmoqda..."
-            docker-compose pull web
+            docker compose pull web
             
             echo "2. Yangi containerlar ishga tushirilmoqda..."
-            docker-compose up -d --remove-orphans
+            docker compose up -d --remove-orphans
             
             echo "3. Eski va keraksiz image'larni tozalash..."
             docker image prune -f

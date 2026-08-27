@@ -117,6 +117,12 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
+            # Barcha kerakli yo'llarni (PATH) yuklab olamiz (non-interactive SSH muammosini hal qilish uchun)
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/snap/bin
+            
+            echo "Ulangan foydalanuvchi: $(whoami)"
+            echo "Docker versiyasi: $(docker --version || echo 'TOPILMADI!')"
+            
             # Serveringizda 'barbergo' degan papka ochamiz va o'sha yerda ishlaymiz
             mkdir -p ~/barbergo
             cd ~/barbergo

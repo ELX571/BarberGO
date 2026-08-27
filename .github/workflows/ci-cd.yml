@@ -117,15 +117,17 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
+            # Serveringizda 'barbergo' degan papka ochamiz va o'sha yerda ishlaymiz
+            mkdir -p ~/barbergo
+            cd ~/barbergo
+            
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            
             echo "1. Eng yangi Docker image yuklab olinmoqda..."
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/barbergo:latest
+            docker-compose pull web
             
-            echo "2. Eski container to'xtatilmoqda va o'chirilmoqda..."
-            docker stop barbergo_app || true
-            docker rm barbergo_app || true
+            echo "2. Yangi containerlar ishga tushirilmoqda..."
+            docker-compose up -d --remove-orphans
             
-            echo "3. Yangi container ishga tushirilmoqda..."
-            docker run -d --name barbergo_app -p 8000:8000 --restart always ${{ secrets.DOCKERHUB_USERNAME }}/barbergo:latest
-            
-            echo "4. Eski va keraksiz image'larni tozalash..."
+            echo "3. Eski va keraksiz image'larni tozalash..."
             docker image prune -f

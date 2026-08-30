@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'orders',
     'notifications',
     'chat',
+    'face_ai',
 
     #rd
     'rest_framework',
@@ -229,7 +230,7 @@ JAZZMIN_SETTINGS = {
     "site_icon": "images/favicon.svg",
     "welcome_sign": "BarberGo Admin paneliga xush kelibsiz",
     "copyright": "BarberGo",
-    "search_model": ["accounts.Account", "posts.Post"],
+    "search_model": ["accounts.Account", "posts.Post", "face_ai.Hairstyle"],
     "user_avatar": None,
     "topmenu_links": [
         {"name": "Bosh sahifa",  "url": "admin:index", "permissions": ["auth.view_user"]},
@@ -239,12 +240,13 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
-    "order_with_respect_to": ["accounts", "posts", "orders", "notifications", "chat"],
+    "order_with_respect_to": ["accounts", "posts", "orders", "face_ai", "notifications", "chat"],
     "custom_links": {},
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
+        "face_ai.Hairstyle": "fas fa-cut",
         "accounts.Account": "fas fa-user-circle",
         "posts.Post": "fas fa-image",
         "posts.Comment": "fas fa-comments",

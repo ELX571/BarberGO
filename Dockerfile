@@ -23,6 +23,7 @@ RUN echo "Version: $BUILD_VERSION"
 RUN python manage.py collectstatic --noinput
 
 RUN useradd -m appuser
+RUN mkdir -p /app/media && chown -R appuser:appuser /app /app/media
 USER appuser
 
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]

@@ -62,3 +62,4 @@ zope.interface==8.5
 django-jazzmin==3.0.1
 gunicorn==26.2.0
 whitenoise==6.7.0
+google-genai==0.3.0

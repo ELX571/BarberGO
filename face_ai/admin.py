@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import Hairstyle
 
 @admin.register(Hairstyle)
@@ -23,7 +24,7 @@ class HairstyleAdmin(admin.ModelAdmin):
         url = obj.get_image_url()
         if url:
             return format_html('<img src="{}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"/>', url)
-        return format_html('<div style="width: 50px; height: 50px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 20px;"><i class="fas fa-cut"></i></div>')
+        return mark_safe('<div style="width: 50px; height: 50px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 20px;"><i class="fas fa-cut"></i></div>')
     image_preview.short_description = "Rasm"
 
     def image_preview_large(self, obj):

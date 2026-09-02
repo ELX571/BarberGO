@@ -31,7 +31,21 @@ class OrderViewSet(ModelViewSet):
         return Order.objects.none()
 
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user)
+        order = serializer.save(customer=self.request.user)
+        
+        customer_name = (
+            self.request.user.get_full_name().strip()
+            or self.request.user.first_name.strip()
+            or self.request.user.username
+        )
+        
+        message = f"Sizga {customer_name} tomonidan yangi bron (order) tushdi!"
+        Notifications.objects.create(
+            title="Yangi bron!",
+            description=message,
+            receptions=order.barber,
+        )
+        notify_user(order.barber.id, message)
 
     def _notify_customer(self, order, new_status):
         barber_name = (

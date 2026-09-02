@@ -157,7 +157,7 @@ function createPostCard(post) {
                 </div>
                 ${(currentUserId !== userObj.id) ? `
                 <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}', '${avatarUrl}')">
-                    <i class="fa-solid fa-phone" style="font-size:14px;"></i> ${userObj.role === 'customer' ? "Mijoz bilan bog'lanish" : "Barber bilan bog'lanish"}
+                    <i class="fa-solid fa-${userObj.role === 'customer' ? 'phone' : 'calendar-check'}" style="font-size:14px;"></i> ${userObj.role === 'customer' ? "Mijoz bilan bog'lanish" : "Bron qilish"}
                 </button>
                 ` : ''}
             </div>

@@ -8,7 +8,7 @@
         </div>
         
         <h3 style="font-size: 20px; margin-bottom: 8px; color: #0f172a; font-weight: 700; font-family: 'Inter', sans-serif;" id="contactModalName">Barber bilan bog'lanish</h3>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-family: 'Inter', sans-serif;">Telefon raqamiga qo'ng'iroq qiling yoki to'g'ridan-to'g'ri xabar yozing.</p>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-family: 'Inter', sans-serif;">Qanday usulda bron qilishni xohlaysiz?</p>
         
         <div id="contactModalPhoneWrapper" style="display: none; background: #f8fafc; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0;">
             <span id="contactModalPhone" style="font-size: 16px; font-weight: 600; color: #0f172a; font-family: 'Inter', sans-serif;"></span>
@@ -17,9 +17,14 @@
             </button>
         </div>
         
-        <button id="contactModalChatBtn" style="background: #f97316; color: white; border: none; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'" onclick="startChatFromContact()">
-            <i class="fa-regular fa-message"></i> Chat orqali yozish
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button id="contactModalChatBtn" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#e2e8f0'" onmouseout="this.style.backgroundColor='#f8fafc'" onclick="startChatFromContact()">
+                <i class="fa-regular fa-message" style="color: #f97316;"></i> Chat orqali bron qilish
+            </button>
+            <button id="contactModalOrderBtn" style="background: #f97316; color: white; border: none; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'" onclick="startOrderFromContact()">
+                <i class="fa-regular fa-calendar-check"></i> Oddiy bron (Order qilish)
+            </button>
+        </div>
     </div>
 </div>
 <style>

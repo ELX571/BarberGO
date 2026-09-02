@@ -184,6 +184,19 @@ function startChatFromContact() {
     window.location.href = `/chat/start/${currentContactUserId}/`;
 }
 
+function startOrderFromContact() {
+    if (!currentContactUserId) return;
+    
+    if (!localStorage.getItem('access_token')) {
+        alert("Bron qilish uchun tizimga kiring!");
+        window.location.href = '/login/';
+        return;
+    }
+    
+    // Redirect to orders page with barber ID in URL to auto-open modal if possible
+    window.location.href = `/orders-ui/?barber_id=${currentContactUserId}`;
+}
+
 // ========== COMMENTS MODAL ==========
 let currentCommentPostId = null;
 

@@ -59,35 +59,42 @@
 
 {% block extra_js %}
 <script>
-    // Load missed notifications from DB
-    const dbNotifs = [
-        {% for notif in db_notifications %}
-        {
-            id: {{ notif.id }},
-            title: "{{ notif.title|escapejs }}",
-            message: "{{ notif.description|escapejs }}",
-            time: "{{ notif.created_at.isoformat }}",
-            read: false
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
-
-    let local = JSON.parse(localStorage.getItem('barbergo_notifications')) || [];
-    
-    // Merge DB notifs into local storage if they don't exist by matching exact time/message
-    let changed = false;
-    dbNotifs.reverse().forEach(dbN => {
-        const exists = local.find(lN => lN.message === dbN.message && Math.abs(new Date(lN.time) - new Date(dbN.time)) < 60000);
-        if (!exists) {
-            local.unshift(dbN);
-            changed = true;
+    async function fetchMissedNotifications() {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+        
+        try {
+            const res = await fetch('/notifications/api/', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const dbNotifs = await res.json();
+                let local = JSON.parse(localStorage.getItem('barbergo_notifications')) || [];
+                let changed = false;
+                
+                dbNotifs.reverse().forEach(dbN => {
+                    const exists = local.find(lN => lN.message === dbN.message && Math.abs(new Date(lN.time) - new Date(dbN.time)) < 60000);
+                    if (!exists) {
+                        local.unshift(dbN);
+                        changed = true;
+                    }
+                });
+                
+                if (changed) {
+                    if (local.length > 100) local.length = 100;
+                    localStorage.setItem('barbergo_notifications', JSON.stringify(local));
+                    if (typeof renderNotifications === 'function') {
+                        renderNotifications();
+                    }
+                }
+            }
+        } catch(e) {
+            console.error('Failed to fetch DB notifications', e);
         }
-    });
-
-    if (changed) {
-        if (local.length > 100) local.length = 100;
-        localStorage.setItem('barbergo_notifications', JSON.stringify(local));
     }
+    
+    // Call it before connecting websocket
+    document.addEventListener('DOMContentLoaded', fetchMissedNotifications);
 </script>
-<script src="{% static 'js/notifications.js' %}?v=2"></script>
+<script src="{% static 'js/notifications.js' %}?v=3"></script>
 {% endblock %}

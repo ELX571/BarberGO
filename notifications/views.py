@@ -10,3 +10,23 @@ def notify_user(user_id, message):
             'message': message
         }
     )
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from notifications.models import Notifications
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_notifications(request):
+    notifs = Notifications.objects.filter(receptions=request.user).order_by('-created_at')
+    data = []
+    for n in notifs:
+        data.append({
+            'id': n.id,
+            'title': n.title,
+            'message': n.description,
+            'time': n.created_at.isoformat(),
+            'read': False
+        })
+    return Response(data)

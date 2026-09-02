@@ -24,6 +24,34 @@
         }
     }
     
+async function handleLogout() {
+    if (!confirm("Tizimdan chiqishni xohlaysizmi?")) return;
+    
+    const refresh = localStorage.getItem('refresh_token');
+    const token = localStorage.getItem('access_token');
+    
+    if (refresh && token) {
+        try {
+            await fetch('/accounts/auth-jwt/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ refresh_token: refresh })
+            });
+        } catch (e) {
+            console.error('Logout error:', e);
+        }
+    }
+    
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_data');
+    document.cookie = "access_token=; path=/; max-age=0;";
+    window.location.href = '/login/';
+}
+
 function switchProfileTab(event, panelId) {
     document.querySelectorAll('.tab-node').forEach(t => t.classList.remove('active-tab'));
     if (event && event.currentTarget) {
@@ -88,7 +116,20 @@ async function removeBookmarkInline(postId) {
                 <div style="display:flex; align-items:flex-end; justify-content:space-between;">
                     <img src="{{ user.get_avatar_url }}" class="p-avatar" onerror="this.src='/media/avatars/default.jpg'">
 
-                    <a href="/settings/" class="edit-p-btn" style="margin-bottom:4px;"><i class="fa-solid fa-gear"></i> Sozlamalar</a>
+                    {% if is_own_profile %}
+                    <div style="display:flex; gap: 8px; margin-bottom:4px;">
+                        <a href="/settings/" class="edit-p-btn"><i class="fa-solid fa-gear"></i> Sozlamalar</a>
+                        <button onclick="handleLogout()" class="edit-p-btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; transition: 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                        </button>
+                    </div>
+                    {% else %}
+                    <div style="display:flex; gap: 8px; margin-bottom:4px;">
+                        <button onclick="openContactModal('{{ user.id }}', '{{ user.first_name|default:user.username }}', '{{ user.phone_number|default:'' }}', '{{ user.get_avatar_url }}')" class="edit-p-btn" style="background: #f97316; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px;">
+                            <i class="fa-solid fa-calendar-check"></i> Bron qilish
+                        </button>
+                    </div>
+                    {% endif %}
 
                 </div>
                 <div class="profile-name-row">

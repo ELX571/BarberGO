@@ -58,5 +58,36 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/notifications.js' %}?v=1"></script>
+<script>
+    // Load missed notifications from DB
+    const dbNotifs = [
+        {% for notif in db_notifications %}
+        {
+            id: {{ notif.id }},
+            title: "{{ notif.title|escapejs }}",
+            message: "{{ notif.description|escapejs }}",
+            time: "{{ notif.created_at.isoformat }}",
+            read: false
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let local = JSON.parse(localStorage.getItem('barbergo_notifications')) || [];
+    
+    // Merge DB notifs into local storage if they don't exist by matching exact time/message
+    let changed = false;
+    dbNotifs.reverse().forEach(dbN => {
+        const exists = local.find(lN => lN.message === dbN.message && Math.abs(new Date(lN.time) - new Date(dbN.time)) < 60000);
+        if (!exists) {
+            local.unshift(dbN);
+            changed = true;
+        }
+    });
+
+    if (changed) {
+        if (local.length > 100) local.length = 100;
+        localStorage.setItem('barbergo_notifications', JSON.stringify(local));
+    }
+</script>
+<script src="{% static 'js/notifications.js' %}?v=2"></script>
 {% endblock %}

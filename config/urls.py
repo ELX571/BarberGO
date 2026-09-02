@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from config.views import profile_view
+from config.views import profile_view, notifications_view
 from django.conf import settings
 from django.conf.urls.static import static
 from face_ai import views as face_ai_views
@@ -34,7 +34,7 @@ urlpatterns = [
     path('register/', TemplateView.as_view(template_name='register.html'), name='register'),
     path('create-post/', TemplateView.as_view(template_name='create_post.html'), name='create-post'),
     path('orders-ui/', TemplateView.as_view(template_name='orders.html'), name='orders-ui'),
-    path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
+    path('notifications/', notifications_view, name='notifications'),
     path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
     path('hairstyles/', face_ai_views.hairstyles_page, name='hairstyles'),
     path('chat/', include('chat.urls')),

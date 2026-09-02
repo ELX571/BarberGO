@@ -44,3 +44,28 @@ def profile_view(request, user_id=None):
         'profile': {},
     }
     return render(request, 'profile.html', context)
+
+
+from notifications.models import Notifications
+
+def notifications_view(request):
+    logged_in_user = request.user
+    
+    if not logged_in_user.is_authenticated:
+        token = request.COOKIES.get('access_token')
+        if token and not blocklisted(token):
+            payload, errors = verify_token(token)
+            if not errors and payload.get('type') == 'access':
+                try:
+                    logged_in_user = Account.objects.get(pk=payload['user_id'])
+                except Account.DoesNotExist:
+                    pass
+    
+    notifications = []
+    if logged_in_user.is_authenticated:
+        notifications = Notifications.objects.filter(receptions=logged_in_user).order_by('-created_at')
+        
+    context = {
+        'db_notifications': notifications
+    }
+    return render(request, 'notifications.html', context)

@@ -54,8 +54,8 @@ class OrderViewSet(ModelViewSet):
             or order.barber.first_name.strip()
             or order.barber.username
         )
-        action_text = 'accept qildi' if new_status == Order.Status.ACCEPTED else 'cancel qildi'
-        message = f'{barber_name} sizning orderingizni {action_text}'
+        action_text = 'qabul qildi' if new_status == Order.Status.ACCEPTED else 'bekor qildi'
+        message = f'Sartarosh {barber_name} sizning brongizni {action_text}.'
 
         Notifications.objects.create(
             order_id=order.id,

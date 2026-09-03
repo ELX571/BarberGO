@@ -8,8 +8,9 @@ class Post(BaseModel):
     title = models.CharField(max_length=120)
     description = models.TextField()
     likes = models.ManyToManyField(Account, related_name='liked_post', blank=True)
+    bookmarks = models.ManyToManyField(Account, related_name='bookmarked_posts', blank=True)
     video = models.FileField(upload_to='media/posts/videos', blank=True, null=True)
-    image = models.ImageField(upload_to='media/posts/images', blank=True, null=True)
+    image = models.ImageField(upload_to='media/posts/images')
 
     def __str__(self):
         return self.title

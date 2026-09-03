@@ -58,5 +58,43 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/notifications.js' %}?v=1"></script>
+<script>
+    async function fetchMissedNotifications() {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+        
+        try {
+            const res = await fetch('/notifications/api/', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const dbNotifs = await res.json();
+                let local = JSON.parse(localStorage.getItem('barbergo_notifications')) || [];
+                let changed = false;
+                
+                dbNotifs.reverse().forEach(dbN => {
+                    const exists = local.find(lN => lN.message === dbN.message && Math.abs(new Date(lN.time) - new Date(dbN.time)) < 60000);
+                    if (!exists) {
+                        local.unshift(dbN);
+                        changed = true;
+                    }
+                });
+                
+                if (changed) {
+                    if (local.length > 100) local.length = 100;
+                    localStorage.setItem('barbergo_notifications', JSON.stringify(local));
+                    if (typeof renderNotifications === 'function') {
+                        renderNotifications();
+                    }
+                }
+            }
+        } catch(e) {
+            console.error('Failed to fetch DB notifications', e);
+        }
+    }
+    
+    // Call it before connecting websocket
+    document.addEventListener('DOMContentLoaded', fetchMissedNotifications);
+</script>
+<script src="{% static 'js/notifications.js' %}?v=3"></script>
 {% endblock %}

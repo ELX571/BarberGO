@@ -10,6 +10,7 @@ function checkAuthState() {
     const currentPath = window.location.pathname;
     
     if (token) {
+        document.cookie = "access_token=" + token + "; path=/; max-age=86400;";
         // Redirect to home if user is already logged in but visits login/register
         if (currentPath === '/login/' || currentPath === '/register/') {
             window.location.href = '/';
@@ -64,12 +65,13 @@ function checkAuthState() {
                 <div style="display: flex; align-items: center; gap: 10px;">
                     ${extraIcon}
                     <a href="/profile/" class="nav-profile-pic" style="display:flex; align-items:center; justify-content:center; width: 42px; height: 42px; border-radius: 50%; overflow:hidden; border: 2px solid var(--accent-primary); transition: transform 0.3s ease; box-shadow: 0 4px 10px rgba(239, 108, 0, 0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        <img src="${avatarUrl}" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/media/avatars/default.jpg'">
+                        <img src="${avatarUrl}" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                     </a>
                 </div>
             `;
         }
     } else {
+        document.cookie = "access_token=; path=/; max-age=0;";
         // Redirect to login if user is not logged in and not already on auth pages
         if (currentPath !== '/login/' && currentPath !== '/register/') {
             window.location.href = '/login/';
@@ -120,3 +122,218 @@ async function apiCall(url, options = {}) {
 }
 
 
+
+// --- Contact Modal Logic ---
+let currentContactUserId = null;
+let currentContactPhone = null;
+
+function openContactModal(userId, name, phone, avatarUrl) {
+    currentContactUserId = userId;
+    currentContactPhone = phone;
+    
+    document.getElementById('contactModalName').innerText = name || "Barber";
+    
+    const avatarImg = document.getElementById('contactModalAvatar');
+    if (avatarImg) {
+        avatarImg.src = avatarUrl || '/media/avatars/default.jpg';
+    }
+    const phoneWrapper = document.getElementById('contactModalPhoneWrapper');
+    
+    if (phone && phone !== 'null' && phone.trim() !== '') {
+        document.getElementById('contactModalPhone').innerText = phone;
+        phoneWrapper.style.display = 'flex';
+    } else {
+        phoneWrapper.style.display = 'none';
+    }
+    
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeContactModal() {
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function copyContactPhone() {
+    if (currentContactPhone) {
+        navigator.clipboard.writeText(currentContactPhone).then(() => {
+            alert("Raqam nusxalandi: " + currentContactPhone);
+        }).catch(err => {
+            console.error('Nusxa olishda xatolik:', err);
+        });
+    }
+}
+
+function startChatFromContact() {
+    if (!currentContactUserId) return;
+    
+    if (!localStorage.getItem('access_token')) {
+        alert("Chatdan foydalanish uchun tizimga kiring!");
+        window.location.href = '/login/';
+        return;
+    }
+    
+    // Make sure cookie is set so Django views know who we are
+    document.cookie = "access_token=" + localStorage.getItem('access_token') + "; path=/";
+    
+    window.location.href = `/chat/start/${currentContactUserId}/`;
+}
+
+function startOrderFromContact() {
+    if (!currentContactUserId) return;
+    
+    if (!localStorage.getItem('access_token')) {
+        alert("Bron qilish uchun tizimga kiring!");
+        window.location.href = '/login/';
+        return;
+    }
+    
+    // Redirect to orders page with barber ID in URL to auto-open modal if possible
+    window.location.href = `/orders-ui/?barber_id=${currentContactUserId}`;
+}
+
+// ========== COMMENTS MODAL ==========
+let currentCommentPostId = null;
+
+window.openCommentsModalGlobal = async function(postId) {
+    currentCommentPostId = postId;
+    document.getElementById('commentsModalOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    await loadComments();
+};
+
+window.closeCommentsModal = function(e) {
+    // Only close if clicking exactly on the overlay, or explicitly called without an event (e.g. from the X button)
+    if (e && e.target !== e.currentTarget) return;
+    
+    const overlay = document.getElementById('commentsModalOverlay');
+    if (overlay) overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    currentCommentPostId = null;
+    const input = document.getElementById('commentInput');
+    if (input) input.value = '';
+};
+
+async function loadComments() {
+    const list = document.getElementById('commentsList');
+    list.innerHTML = '<div style="text-align: center; color: #9ca3af; margin-top: 20px;">Yuklanmoqda...</div>';
+    
+    try {
+        const res = await apiCall(`/posts/posts/${currentCommentPostId}/get_comment/`);
+        if (!res.ok) throw new Error("Failed to load comments");
+        const comments = await res.json();
+        
+        if (comments.length === 0) {
+            list.innerHTML = '<div style="text-align: center; color: #9ca3af; margin-top: 20px;">Hali izohlar yo\'q. Birinchi bo\'lib izoh yozing!</div>';
+            return;
+        }
+        
+        list.innerHTML = comments.map(c => {
+            const dateObj = new Date(c.created_at);
+            const timeStr = dateObj.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = dateObj.toLocaleDateString('uz-UZ', { day: 'numeric', month: 'short' });
+            
+            return `
+            <div style="display: flex; gap: 12px; margin-bottom: 4px; padding: 4px 0;">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.username || 'U')}&background=f97316&color=fff&rounded=true&size=128" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" alt="${c.username}">
+                <div style="flex: 1; background: #f3f4f6; padding: 10px 14px; border-radius: 4px 16px 16px 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                        <strong style="font-size: 14px; color: #111827;">${c.username || 'Foydalanuvchi'}</strong>
+                        <span style="font-size: 11px; color: #6b7280; white-space: nowrap; margin-left: 8px;">${dateStr}, ${timeStr}</span>
+                    </div>
+                    <div style="font-size: 14px; color: #374151; line-height: 1.4; word-break: break-word;">${c.text}</div>
+                </div>
+            </div>
+        `}).join('');
+        
+        // Scroll to bottom
+        list.scrollTop = list.scrollHeight;
+    } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div style="text-align: center; color: #ef4444; margin-top: 20px;">Izohlarni yuklashda xatolik.</div>';
+    }
+}
+
+window.submitComment = async function() {
+    if (!currentCommentPostId) return;
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    input.disabled = true;
+    try {
+        const res = await apiCall(`/posts/posts/${currentCommentPostId}/comment/`, {
+            method: 'POST',
+            body: JSON.stringify({ text })
+        });
+        
+        if (!res.ok) throw new Error("Failed to post comment");
+        const data = await res.json();
+        
+        input.value = '';
+        await loadComments();
+        
+        // Update all comment counts on UI
+        document.querySelectorAll(`.post-comment-btn-${currentCommentPostId}`).forEach(btn => {
+            const countSpan = btn.querySelector('.comment-count');
+            if (countSpan && data.comments_count !== undefined) {
+                countSpan.textContent = data.comments_count;
+            }
+        });
+        
+    } catch (err) {
+        alert("Izoh yuborishda xatolik yuz berdi.");
+    } finally {
+        input.disabled = false;
+        input.focus();
+    }
+};
+
+window.togglePostLikeGlobal = async function(postId) {
+    try {
+        const res = await apiCall(`/posts/posts/${postId}/like/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle like");
+        const data = await res.json();
+        
+        // Update all like buttons for this post on the page
+        document.querySelectorAll(`.post-like-btn-${postId}`).forEach(btn => {
+            const icon = btn.querySelector('i');
+            const countSpan = btn.querySelector('.like-count');
+            if (countSpan) countSpan.textContent = data.likes;
+            
+            if (data.like) {
+                icon.className = 'fa-solid fa-heart';
+                btn.style.color = '#ef4444';
+            } else {
+                icon.className = 'fa-regular fa-heart';
+                btn.style.color = '#6b7280';
+            }
+        });
+    } catch(e) { console.error(e); }
+};
+
+window.togglePostBookmarkGlobal = async function(postId) {
+    try {
+        const res = await apiCall(`/posts/posts/${postId}/bookmark/`, { method: 'POST' });
+        if (!res.ok) throw new Error("Failed to toggle bookmark");
+        const data = await res.json();
+        
+        // Update all bookmark buttons for this post on the page
+        document.querySelectorAll(`.post-bookmark-btn-${postId}`).forEach(btn => {
+            const icon = btn.querySelector('i');
+            
+            if (data.bookmarked) {
+                icon.className = 'fa-solid fa-bookmark';
+                btn.style.color = '#3b82f6';
+            } else {
+                icon.className = 'fa-regular fa-bookmark';
+                btn.style.color = '#6b7280';
+            }
+        });
+    } catch(e) { console.error(e); }
+};

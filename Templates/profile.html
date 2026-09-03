@@ -4,6 +4,54 @@
 {% block extra_js %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=3">
 <script>
+    // Sync localStorage token to cookie if Django missed it
+    const tk = localStorage.getItem('access_token');
+    const isAuth = "{{ is_authenticated|yesno:'true,false' }}" === "true";
+    if (tk && !isAuth) {
+        let cookieTk = null;
+        document.cookie.split(';').forEach(c => {
+            if (c.trim().startsWith('access_token=')) cookieTk = c.trim().substring(13);
+        });
+        if (cookieTk === tk) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_data');
+            document.cookie = "access_token=; path=/; max-age=0;";
+            window.location.href = '/login/';
+        } else {
+            document.cookie = "access_token=" + tk + "; path=/; max-age=86400;";
+            window.location.reload();
+        }
+    }
+    
+async function handleLogout() {
+    if (!confirm("Tizimdan chiqishni xohlaysizmi?")) return;
+    
+    const refresh = localStorage.getItem('refresh_token');
+    const token = localStorage.getItem('access_token');
+    
+    if (refresh && token) {
+        try {
+            await fetch('/accounts/auth-jwt/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ refresh_token: refresh })
+            });
+        } catch (e) {
+            console.error('Logout error:', e);
+        }
+    }
+    
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_data');
+    document.cookie = "access_token=; path=/; max-age=0;";
+    window.location.href = '/login/';
+}
+
 function switchProfileTab(event, panelId) {
     document.querySelectorAll('.tab-node').forEach(t => t.classList.remove('active-tab'));
     if (event && event.currentTarget) {
@@ -15,6 +63,31 @@ function switchProfileTab(event, panelId) {
         target.classList.add('active-panel');
     }
 }
+
+async function removeBookmarkInline(postId) {
+    if (!tk) {
+        window.location.href = '/login/';
+        return;
+    }
+    try {
+        const response = await fetch(`/posts/posts/${postId}/bookmark/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${tk}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            const card = document.getElementById(`bookmark-card-${postId}`);
+            if (card) {
+                card.remove();
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
 </script>
 {% endblock %}
 
@@ -23,7 +96,7 @@ function switchProfileTab(event, panelId) {
 <div class="profile-container">
 
         <div class="profile-top-navigation">
-            <a href="#" class="back-market-btn"><i class="fa-solid fa-arrow-left"></i> Ortga</a>
+            <a href="/" class="back-market-btn"><i class="fa-solid fa-arrow-left"></i> Ortga</a>
             {% if is_own_profile %}
             <button id="notifToggleBtn" class="profile-theme-toggle" onclick="openNotificationsPanel()">
                 <i class="fa-solid fa-bell"></i>
@@ -43,7 +116,20 @@ function switchProfileTab(event, panelId) {
                 <div style="display:flex; align-items:flex-end; justify-content:space-between;">
                     <img src="{{ user.get_avatar_url }}" class="p-avatar" onerror="this.src='/media/avatars/default.jpg'">
 
-                    <a href="/settings/" class="edit-p-btn" style="margin-bottom:4px;"><i class="fa-solid fa-gear"></i> Sozlamalar</a>
+                    {% if is_own_profile %}
+                    <div style="display:flex; gap: 8px; margin-bottom:4px;">
+                        <a href="/settings/" class="edit-p-btn"><i class="fa-solid fa-gear"></i> Sozlamalar</a>
+                        <button onclick="handleLogout()" class="edit-p-btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; transition: 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                        </button>
+                    </div>
+                    {% else %}
+                    <div style="display:flex; gap: 8px; margin-bottom:4px;">
+                        <button onclick="openContactModal('{{ user.id }}', '{{ user.first_name|default:user.username }}', '{{ user.phone_number|default:'' }}', '{{ user.get_avatar_url }}')" class="edit-p-btn" style="background: #f97316; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px;">
+                            <i class="fa-solid fa-calendar-check"></i> Bron qilish
+                        </button>
+                    </div>
+                    {% endif %}
 
                 </div>
                 <div class="profile-name-row">
@@ -57,10 +143,12 @@ function switchProfileTab(event, panelId) {
                             {% endif %}
                         </h2>
                         <p style="color:var(--text-muted); font-size:14px; margin-top:3px;">@{{ user.username }} &middot;
-                            <span style="color:var(--active-text-blue); font-weight:700;">Master Usta</span>
+                            <span style="color:var(--active-text-blue); font-weight:700;">
+                                {% if user.role == 'barber' %}Barber{% else %}Mijoz{% endif %}
+                            </span>
                         </p>
-                        {% if profile.get_city_display %}
-                        <p style="font-size:13px; margin-top:6px; color:var(--text-muted);"><i class="fa-solid fa-location-dot" style="color:var(--active-text-blue);"></i> Toshkent, UZ</p>
+                        {% if user.city %}
+                        <p style="font-size:13px; margin-top:6px; color:var(--text-muted);"><i class="fa-solid fa-location-dot" style="color:var(--active-text-blue);"></i> {{ user.get_city_display }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -79,7 +167,6 @@ function switchProfileTab(event, panelId) {
 
         <div class="profile-tabs">
             <div class="tab-node active-tab" onclick="switchProfileTab(event, 'my-posts-panel')">Postlar</div>
-            <div class="tab-node" onclick="switchProfileTab(event, 'rating-stats-panel')">Videolar</div>
             {% if is_own_profile %}
             <div class="tab-node" onclick="switchProfileTab(event, 'liked-posts-panel')">Yoqqanlar</div>
             <div class="tab-node" onclick="switchProfileTab(event, 'bookmarked-posts-panel')">Saqlanganlar</div>
@@ -90,22 +177,22 @@ function switchProfileTab(event, panelId) {
         <div class="tab-content-panel active-panel" id="my-posts-panel">
             {% for post in my_posts %}
                 <div class="tweet-card" id="post-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px; position: relative;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; position: relative; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--active-text-blue);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
                                     {{ post.user.get_full_name|default:post.user.username }}
                                     {% if post.user.profile.is_premium %}
-                                        <i class="fa-solid fa-crown" style="color: #f97316; font-size: 14px; margin-left: 4px; filter: drop-shadow(0 0 4px rgba(249,115,22,0.5));" title="Premium Usta"></i>
+                                        <i class="fa-solid fa-crown" style="color: #f97316; font-size: 14px; margin-left: 4px; filter: drop-shadow(0 0 4px rgba(249,115,22,0.5));" title="Premium Barber"></i>
                                     {% elif post.user.profile.is_verified %}
                                         <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                     {% endif %}
                                 </strong>
                             </div>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}
@@ -117,185 +204,47 @@ function switchProfileTab(event, panelId) {
                     {% if post.price %}<div class="tweet-price-badge"><i class="fa-solid fa-wallet"></i> {{ post.price }} UZS</div>{% endif %}
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <div class="tweet-manage-toolbar">
-                        <div class="tweet-stats">
-                            <span><i class="fa-solid fa-heart" style="color: #ef4444;"></i> {{ post.likes_count|default:0 }}</span>
-                            <span><i class="fa-solid fa-bookmark" style="color: #3b82f6;"></i> {{ post.bookmarks.count }}</span>
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Barber{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
                         </div>
-                        {% if is_own_profile %}
-                        <div class="tweet-manage-actions">
-                            <a href="#" class="manage-btn edit"><i class="fa-solid fa-pen"></i> Tahrirlash</a>
-                            <button class="manage-btn delete" onclick="openDeleteModal('#')"><i class="fa-solid fa-trash"></i> O'chirish</button>
-                        </div>
-                        {% endif %}
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
                     </div>
+
+                    {% if is_own_profile %}
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
+                        <div class="tweet-manage-actions" style="width: 100%;">
+                            <a href="#" class="manage-btn edit" style="width: 50%; justify-content: center;"><i class="fa-solid fa-pen"></i> Tahrirlash</a>
+                            <button class="manage-btn delete" onclick="openDeleteModal('#')" style="width: 50%; justify-content: center;"><i class="fa-solid fa-trash"></i> O'chirish</button>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             {% empty %}
                 <div class="no-data-msg" style="text-align:center; padding: 40px; color: var(--text-muted);">Siz hali biror marta e'lon joylashtirmadingiz.</div>
             {% endfor %}
         </div>
 
-        <!-- TABS: Reyting va Statistika (PREMIUM) -->
-        <div class="tab-content-panel" id="rating-stats-panel">
-            {% if profile.role == 'builder' or profile.role == 'team' %}
-
-                <!-- Hero: Trust Index + Status -->
-                <div class="trust-hero">
-                    <div>
-                        <div class="trust-label"><i class="fa-solid fa-shield-halved"></i> &nbsp;Ishonch Indeksi</div>
-                        <div class="trust-score-big" id="trustScoreNum">0</div>
-                        <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">/ 100 ball</div>
-                        <div class="trust-bar-track">
-                            <div class="trust-bar-fill" id="trustBarFill" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div class="trust-label">Gamifikatsiya statusi</div>
-                        {% with status=profile.builder_info.gamification_status|default:'Newbie' %}
-                        <div class="gamification-badge
-                            {% if status == 'Elite' %}badge-elite
-                            {% elif status == 'Pro' %}badge-pro
-                            {% elif status == 'Trusted' %}badge-trusted
-                            {% else %}badge-newbie{% endif %}">
-                            {% if status == 'Elite' %}<i class="fa-solid fa-crown"></i>
-                            {% elif status == 'Pro' %}<i class="fa-solid fa-circle-check"></i>
-                            {% elif status == 'Trusted' %}<i class="fa-solid fa-shield-check"></i>
-                            {% else %}<i class="fa-solid fa-seedling"></i>{% endif %}
-                            {{ status }}
-                        </div>
-                        {% endwith %}
-                        <div style="font-size:12px; color:var(--text-muted); margin-top:10px; font-weight:600;">
-                            {% with c=profile.completed_orders_count|default:0 %}
-                            {{ c }} ta muvaffaqiyatli buyurtma
-                            {% endwith %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats Mini Grid -->
-                <div class="stats-grid">
-                    <div class="stat-mini-card" style="grid-column: span 3; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;">
-                        <div class="stat-mini-num" style="color:#eab308; font-size: 42px; margin-bottom: 8px;">6.8 <span style="font-size: 16px; color: var(--text-muted);">/ 7.0</span></div>
-                        <div style="display: flex; gap: 6px; font-size: 22px; margin-bottom: 8px;">
-                            <!-- 7 Yulduz vizualizatsiyasi -->
-                            {% for i in '1234567' %}
-                                {% if forloop.counter <= profile.rating_average %}
-                                    <i class="fa-solid fa-star" style="color:#f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));"></i>
-                                {% elif forloop.counter <= profile.rating_average|add:0.5 %}
-                                    <i class="fa-solid fa-star-half-stroke" style="color:#f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));"></i>
-                                {% else %}
-                                    <i class="fa-solid fa-star" style="color:#475569; opacity:0.3;"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <div class="stat-mini-lbl" style="font-size: 14px; font-weight: 700; color: var(--active-text-blue);"><i class="fa-solid fa-ranking-star"></i> Builder Pro Reytingi</div>
-                    </div>
-                    <div class="stat-mini-card">
-                        <div class="stat-mini-num" style="color:#10b981;">{{ profile.completed_orders_count|default:0 }}</div>
-                        <div class="stat-mini-lbl"><i class="fa-solid fa-check"></i> Bajarildi</div>
-                    </div>
-                    <div class="stat-mini-card">
-                        <div class="stat-mini-num" style="color:#ef4444;">{{ profile.canceled_orders_count|default:0 }}</div>
-                        <div class="stat-mini-lbl"><i class="fa-solid fa-xmark"></i> Bekor</div>
-                    </div>
-                </div>
-
-                {% if profile.builder_info.is_needs_improvement %}
-                <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); padding:16px 20px; border-radius:16px; color:#ef4444; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px;">
-                    <i class="fa-solid fa-triangle-exclamation" style="font-size:20px;"></i>
-                    <span>Reytinging 3.0 dan past. Iltimos, admin bilan bog'laning yoki sifatni oshiring.</span>
-                </div>
-                {% endif %}
-
-                <!-- Quality Bars -->
-                <div>
-                    <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--active-text-blue);"></i> Sifat Diagrammasi</div>
-                    <div class="quality-row">
-                        <div class="q-item">
-                            <div class="q-header">
-                                <span class="q-title"><i class="fa-solid fa-star" style="color:#eab308;"></i> Ish sifati (O'rtacha)</span>
-                                <span class="q-score" style="color:#eab308;">6.8 / 7.0</span>
-                            </div>
-                            <div class="q-bar" style="background:rgba(234,179,8,0.12);">
-                                <div class="q-fill" style="background:linear-gradient(90deg,#eab308,#f59e0b);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
-                            </div>
-                        </div>
-                        <div class="q-item">
-                            <div class="q-header">
-                                <span class="q-title"><i class="fa-solid fa-clock" style="color:#10b981;"></i> Vaqtga rioya</span>
-                                <span class="q-score" style="color:#10b981;">6.8 / 7.0</span>
-                            </div>
-                            <div class="q-bar" style="background:rgba(16,185,129,0.12);">
-                                <div class="q-fill" style="background:linear-gradient(90deg,#10b981,#34d399);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
-                            </div>
-                        </div>
-                        <div class="q-item">
-                            <div class="q-header">
-                                <span class="q-title"><i class="fa-solid fa-handshake" style="color:#3b82f6;"></i> Xushmuomalalik</span>
-                                <span class="q-score" style="color:#3b82f6;">6.8 / 7.0</span>
-                            </div>
-                            <div class="q-bar" style="background:rgba(59,130,246,0.12);">
-                                <div class="q-fill" style="background:linear-gradient(90deg,#3b82f6,#60a5fa);" data-width="{{ profile.rating_average|default:0 }}" data-max="7"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews -->
-                <div>
-                    <div class="section-title"><i class="fa-solid fa-comments" style="color:var(--active-text-blue);"></i> Mijozlar Izohlari</div>
-                    <div style="display:flex; flex-direction:column; gap:14px;">
-                        {% for review in profile.builder_info.received_reviews.all %}
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff6b00,#ff8c33);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;">{{ review.client.user.get_full_name|first|default:'?' }}</div>
-                                    <div>
-                                        <div style="font-weight:700; font-size:14px;">{{ review.client.user.get_full_name|default:review.client.user.username }}</div>
-                                        <div style="font-size:12px; color:var(--text-muted);">{{ review.created_at|date:'d M Y'|default:'' }}</div>
-                                    </div>
-                                </div>
-                                <div class="review-stars">
-                                    {% for i in '12345' %}
-                                        {% if forloop.counter <= review.rating %}
-                                        <i class="fa-solid fa-star"></i>
-                                        {% else %}
-                                        <i class="fa-regular fa-star" style="opacity:0.3;"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <p style="font-size:14px; color:var(--text-muted); line-height:1.6;">{{ review.comment }}</p>
-                            {% if review.builder_reply %}
-                            <div class="review-reply">
-                                <strong style="color:var(--active-text-blue); font-size:12px;"><i class="fa-solid fa-reply"></i> Sizning javobingiz</strong>
-                                <p style="margin-top:4px;">{{ review.builder_reply }}</p>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% empty %}
-                        <div style="text-align:center; padding:40px; color:var(--text-muted);">
-                            <i class="fa-regular fa-comment-dots" style="font-size:36px; opacity:0.3; display:block; margin-bottom:12px;"></i>
-                            Hozircha izohlar yo'q.
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-            {% else %}
-                <div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
-                    <i class="fa-solid fa-user" style="font-size:48px; opacity:0.2; display:block; margin-bottom:16px;"></i>
-                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:8px;">Siz mijozsiz</h3>
-                    <p style="font-size:14px;">Ustalarning reytingini <a href="#" style="color:var(--active-text-blue);">Usta Qidirish</a> sahifasida ko'ring.</p>
-                </div>
-            {% endif %}
-        </div>
 
         <!-- TABS: Yoqqanlar -->
         <div class="tab-content-panel" id="liked-posts-panel">
             {% for post in liked_posts %}
                 <div class="tweet-card" id="liked-card-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
@@ -306,9 +255,9 @@ function switchProfileTab(event, panelId) {
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}
@@ -318,9 +267,30 @@ function switchProfileTab(event, panelId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <div class="tweet-manage-toolbar">
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Barber{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                         <div class="tweet-manage-actions" style="width: 100%;">
-                            <button class="manage-btn delete" onclick="removeLikeInline('{{ post.id }}')" style="width: 100%;">
+                            <button class="manage-btn delete" onclick="removeLikeInline('{{ post.id }}')" style="width: 100%; justify-content: center;">
                                 <i class="fa-solid fa-heart-broken"></i> Ro'yxatdan olib tashlash
                             </button>
                         </div>
@@ -335,7 +305,7 @@ function switchProfileTab(event, panelId) {
         <div class="tab-content-panel" id="bookmarked-posts-panel">
             {% for post in bookmarked_posts %}
                 <div class="tweet-card" id="bookmark-card-{{ post.id }}">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <a href="{% url 'public-profile' user_id=post.user.id %}" style="display: flex; gap: 12px; margin-bottom: 12px; text-decoration: none; color: inherit;">
                         <img src="{{ post.user.get_avatar_url }}" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
                         <div style="display: flex; flex-direction: column; justify-content: center;">
                             <strong style="color: var(--text-main); font-size: 16px; display:flex; align-items:center; gap:4px;">
@@ -346,9 +316,9 @@ function switchProfileTab(event, panelId) {
                                     <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>
                                 {% endif %}
                             </strong>
-                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_time|date:"d M Y" }} &middot; <span style="color:#f59e0b; font-weight:600; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-star" style="font-size:11px;"></i> {{ post.user.profile.rating_average|floatformat:1 }}</span></span>
+                            <span style="color: var(--text-muted); font-size: 13px;">@{{ post.user.username }} &middot; {{ post.created_at|date:"d M Y" }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="tweet-body">
                         {% if post.title and post.title != 'Yangi Post' and post.title != "Qurilish e'loni" %}
@@ -358,9 +328,30 @@ function switchProfileTab(event, panelId) {
                     </div>
                     {% if post.image %}<img src="{{ post.image.url }}" class="tweet-image">{% endif %}
 
-                    <div class="tweet-manage-toolbar">
+                    {% if request.user != post.user %}
+                    <button class="btn btn-primary" style="width:100%; margin-top:12px; margin-bottom:12px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal({{ post.user.id }}, '{{ post.user.get_full_name|default:post.user.username|escapejs }}', '{{ post.user.phone_number|default:''|escapejs }}', '{{ post.user.get_avatar_url|default:'/media/avatars/default.jpg'|escapejs }}')">
+                        <i class="fa-solid fa-phone" style="font-size:14px;"></i> {% if post.user.role == 'customer' %}Mijoz{% else %}Barber{% endif %} bilan bog'lanish
+                    </button>
+                    {% endif %}
+                    <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                        <div style="display:flex; gap:16px;">
+                            <button class="post-action-btn post-like-btn-{{ post.id }}" onclick="togglePostLikeGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.likes.all %}color:#ef4444;{% else %}color:#6b7280;{% endif %}">
+                                <i class="{% if request.user in post.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="post-action-btn post-comment-btn-{{ post.id }}" onclick="openCommentsModalGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                        <button class="post-action-btn post-bookmark-btn-{{ post.id }}" onclick="togglePostBookmarkGlobal({{ post.id }})" style="background:none; border:none; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; transition:0.2s; {% if request.user in post.bookmarks.all %}color:#3b82f6;{% else %}color:#6b7280;{% endif %}">
+                            <i class="{% if request.user in post.bookmarks.all %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="tweet-manage-toolbar" style="margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                         <div class="tweet-manage-actions" style="width: 100%;">
-                            <button class="manage-btn" onclick="removeBookmarkInline('{{ post.id }}')" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <button class="manage-btn" onclick="removeBookmarkInline('{{ post.id }}')" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2); justify-content: center;">
                                 <i class="fa-regular fa-bookmark"></i> Saqlashni bekor qilish
                             </button>
                         </div>

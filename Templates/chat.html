@@ -1,157 +1,547 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
-{% block title %}Chat - BarberGo{% endblock %}
+{% block title %}Suhbatlar{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/chat_v2.css' %}?v=4">
+<style>
+/* ========== CHAT LAYOUT ========== */
+.chat-app {
+    display: flex;
+    height: calc(100vh - 80px);
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+
+/* ========== LEFT PANEL ========== */
+.chat-list-panel {
+    width: 320px;
+    min-width: 320px;
+    border-right: 1px solid #e5e7eb;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+}
+.chat-search { padding: 16px; border-bottom: 1px solid #e5e7eb; }
+.chat-search input {
+    width: 100%; padding: 10px 16px; border-radius: 10px;
+    border: 1px solid #d1d5db; outline: none; font-size: 14px;
+    background: #fff; transition: border-color 0.2s;
+}
+.chat-search input:focus { border-color: #f97316; }
+.room-list { flex: 1; overflow-y: auto; }
+
+.room-item {
+    display: flex; gap: 12px; padding: 14px 16px; cursor: pointer;
+    border-bottom: 1px solid #f3f4f6; transition: background 0.15s;
+}
+.room-item:hover { background: #f3f4f6; }
+.room-item.active { background: #f97316; }
+
+.avatar-circle {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #f97316; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; flex-shrink: 0;
+}
+.room-item.active .avatar-circle {
+    background: #fff; color: #f97316;
+}
+
+.room-item-body { flex: 1; min-width: 0; }
+.room-item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+.room-item-name { font-weight: 600; font-size: 14px; color: #111827; }
+.room-item-time { font-size: 11px; color: #9ca3af; }
+.room-item.active .room-item-name, .room-item.active .room-item-time { color: #fff; }
+
+.room-item-bottom { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.room-item-last { font-size: 13px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-item.active .room-item-last { color: rgba(255, 255, 255, 0.9); }
+
+.room-item-badge {
+    background: #f97316; color: #fff; font-size: 11px; font-weight: 700;
+    border-radius: 10px; min-width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 5px; flex-shrink: 0;
+}
+.room-item.active .room-item-badge { background: #fff; color: #f97316; }
+
+/* ========== RIGHT PANEL ========== */
+.chat-active-panel { flex: 1; display: flex; flex-direction: column; background: #fff; }
+.chat-placeholder {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #9ca3af; font-size: 16px; gap: 12px;
+}
+.chat-placeholder i { font-size: 48px; color: #d1d5db; }
+
+.chat-active-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid #e5e7eb; background: #fff;
+}
+.chat-active-who { display: flex; align-items: center; gap: 12px; }
+.chat-active-name { font-weight: 700; font-size: 15px; color: #111827; }
+.chat-active-status { font-size: 12px; color: #9ca3af; }
+
+/* Messages */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc; /* Beautiful soft blue-gray background */
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 20px 20px; /* Subtle pattern */
+}
+.msg {
+    max-width: 75%;
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+.msg.mine {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #fff;
+    border-radius: 18px 18px 4px 18px;
+}
+.msg.theirs {
+    align-self: flex-start;
+    background: #fff;
+    color: #1e293b;
+    border-radius: 18px 18px 18px 4px;
+}
+
+/* Message Text */
+.msg-text {
+    padding: 10px 16px;
+}
+
+/* Media (Images, Videos) */
+.msg img, .msg video {
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 14px;
+    object-fit: cover;
+}
+@media (max-width: 768px) {
+    .msg img, .msg video {
+        max-width: 250px;
+        max-height: 250px;
+    }
+}
+/* If media is the only thing or has text */
+.msg:not(.has-text) img, .msg:not(.has-text) video {
+    border-radius: 18px 18px 4px 18px; /* mine default */
+}
+.msg.theirs:not(.has-text) img, .msg.theirs:not(.has-text) video {
+    border-radius: 18px 18px 18px 4px;
+}
+.msg.has-text img, .msg.has-text video {
+    border-radius: 14px 14px 4px 4px;
+    margin-bottom: -8px; /* overlap with text padding */
+}
+
+/* Audio Player */
+.msg audio {
+    width: 260px;
+    height: 44px;
+    border-radius: 22px;
+    margin: 8px;
+}
+.msg.mine audio {
+    filter: invert(1) hue-rotate(180deg); /* Make audio player fit dark bg */
+}
+
+/* Time & Checks */
+.msg small {
+    align-self: flex-end;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px 8px 12px;
+}
+.msg.theirs small {
+    align-self: flex-start;
+    color: #94a3b8;
+}
+.msg:not(.has-text) small {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+}
+
+/* Input Row */
+.chat-input-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-top: 1px solid #e5e7eb; background: #fff;
+}
+.chat-icon-btn {
+    width: 38px; height: 38px; border-radius: 50%; background: #f3f4f6;
+    border: none; font-size: 16px; cursor: pointer; color: #6b7280;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.15s; flex-shrink: 0;
+}
+.chat-icon-btn:hover { background: #e5e7eb; color: #f97316; }
+.chat-icon-btn.recording { background: #fee2e2; color: #ef4444; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+#chatInput {
+    flex: 1; padding: 10px 16px; border-radius: 20px;
+    border: 1px solid #d1d5db; outline: none; font-size: 14px;
+    background: #f9fafb; transition: 0.2s;
+}
+#chatInput:focus { border-color: #f97316; background: #fff; }
+.chat-send-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #f97316; color: #fff; border: none;
+    cursor: pointer; font-size: 16px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.15s;
+}
+.chat-send-btn:hover { background: #ea580c; }
+
+.upload-progress {
+    padding: 8px 16px; background: #fffbeb;
+    border-top: 1px solid #fef3c7; font-size: 13px;
+    color: #92400e; display: none;
+}
+
+@media (max-width: 768px) {
+    .chat-list-panel { width: 100%; min-width: unset; }
+    .chat-active-panel { display: none; }
+    .chat-app.room-open .chat-list-panel { display: none; }
+    .chat-app.room-open .chat-active-panel { display: flex; }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="chat-page-wrapper fade-in">
-    
-    <!-- Left Sidebar (Chat List) -->
-    <div class="chat-sidebar">
-        
-        <div class="chat-sidebar-header">
-            <div class="chat-search-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" placeholder="Qidiruv...">
-            </div>
+<div class="chat-app" id="chatApp">
+    <aside class="chat-list-panel">
+        <div class="chat-search">
+            <input type="text" id="roomSearch" placeholder="🔍  Qidiruv...">
         </div>
-
-        <div class="chat-list">
-            
-            <!-- Chat Item 1 (Active) -->
-            <div class="chat-item active">
-                <div class="chat-avatar">
-                    A
-                    <div class="chat-status-dot"></div>
-                </div>
-                <div class="chat-item-content">
-                    <div class="chat-item-header">
-                        <span class="chat-item-name">Admin (Support)</span>
-                        <span class="chat-item-time">10:42</span>
-                    </div>
-                    <div class="chat-item-bottom">
-                        <span class="chat-item-msg">Xush kelibsiz, savollaringiz bormi?</span>
-                        <span class="chat-unread-badge">2</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Item 2 -->
-            <div class="chat-item">
-                <div class="chat-avatar">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Barber">
-                    <div class="chat-status-dot" style="background:#cbd5e1; border-color:white;"></div>
-                </div>
-                <div class="chat-item-content">
-                    <div class="chat-item-header">
-                        <span class="chat-item-name">Usta Sardor</span>
-                        <span class="chat-item-time">Kecha</span>
-                    </div>
-                    <div class="chat-item-bottom">
-                        <span class="chat-item-msg">Soat 15:00 da kutaman.</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Item 3 -->
-            <div class="chat-item">
-                <div class="chat-avatar">
-                    B
-                </div>
-                <div class="chat-item-content">
-                    <div class="chat-item-header">
-                        <span class="chat-item-name">BarberGo Bot</span>
-                        <span class="chat-item-time">Dushanba</span>
-                    </div>
-                    <div class="chat-item-bottom">
-                        <span class="chat-item-msg">Sizning buyurtmangiz qabul qilindi.</span>
-                    </div>
-                </div>
-            </div>
-
+        <div id="roomListItems" class="room-list"></div>
+        <div id="chatAuthMsg" style="display:none; padding:2rem 1rem; text-align:center; color:#9ca3af; font-size:14px;">
+            Suhbatlarni ko'rish uchun <a href="/login/" style="color:#f97316;">tizimga kiring</a>.
         </div>
-    </div>
+        <div id="chatEmptyMsg" style="display:none; padding:2rem 1rem; text-align:center; color:#9ca3af; font-size:14px;">
+            Hozircha suhbatlar yo'q.
+        </div>
+    </aside>
 
-    <!-- Right Main Chat Area -->
-    <div class="chat-main">
-        
-        <!-- Chat Header -->
-        <div class="chat-main-header">
-            <div class="chat-main-user">
-                <div class="chat-avatar" style="width: 45px; height: 45px;">
-                    A
-                </div>
-                <div class="chat-main-user-info">
-                    <h2>Admin (Support)</h2>
-                    <p>onlayn</p>
+    <section class="chat-active-panel">
+        <div id="chatPlaceholder" class="chat-placeholder">
+            <i class="fa-regular fa-comments"></i>
+            Suhbatni tanlang
+        </div>
+        <div id="chatConversation" style="display:none; flex-direction:column; height:100%;">
+            <div class="chat-active-header">
+                <div class="chat-active-who">
+                    <div class="avatar-circle" id="chatAvatar">?</div>
+                    <div>
+                        <div class="chat-active-name" id="chatName">—</div>
+                        <div class="chat-active-status" id="chatStatus">—</div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="chat-main-actions">
-                <button class="chat-action-btn" title="Qo'ng'iroq qilish">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="upload-progress" id="uploadProgress">📤 Yuklanmoqda...</div>
+            <div class="chat-input-row">
+                <input type="file" id="chatFileInput" accept="image/*,video/*" style="display:none;">
+                <button class="chat-icon-btn" id="chatAttachBtn" title="Rasm/Video yuborish">
+                    <i class="fa-solid fa-paperclip"></i>
                 </button>
-                <button class="chat-action-btn" title="Qo'shimcha sozlamalar">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                <button class="chat-icon-btn" id="chatVoiceBtn" title="Ovozli xabar">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <input type="text" id="chatInput" placeholder="Xabar yozing...">
+                <button class="chat-send-btn" id="chatSendBtn" title="Yuborish">
+                    <i class="fa-solid fa-paper-plane" style="font-size:14px;"></i>
                 </button>
             </div>
         </div>
-
-        <!-- Chat Messages -->
-        <div class="chat-messages-container">
-            
-            <div class="chat-date-divider">
-                <span>Bugun</span>
-            </div>
-
-            <div class="message received">
-                <div class="message-bubble">
-                    Salom! BarberGo tizimiga xush kelibsiz. Qanday yordam bera olaman?
-                    <span class="message-time">10:40</span>
-                </div>
-            </div>
-
-            <div class="message sent">
-                <div class="message-bubble">
-                    Assalomu alaykum. Men soch turmaklari haqida ma'lumot olmoqchi edim.
-                    <span class="message-time">
-                        10:41 
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    </span>
-                </div>
-            </div>
-
-            <div class="message received">
-                <div class="message-bubble">
-                    Albatta, chap menudan "Soch turmaklari" (qaychi belgisi) qismiga kirsangiz barcha ma'lumotlarni ko'rishingiz mumkin. Yana savollaringiz bormi?
-                    <span class="message-time">10:42</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Chat Input -->
-        <div class="chat-input-container">
-            <button class="chat-attach-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-            </button>
-            
-            <div class="chat-input-box">
-                <input type="text" placeholder="Xabar yozing...">
-                <button class="chat-emoji-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                </button>
-            </div>
-
-            <button class="chat-send-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-        </div>
-
-    </div>
+    </section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('access_token');
+    const userDataRaw = localStorage.getItem('user_data');
+    const authMsg = document.getElementById('chatAuthMsg');
+    const emptyMsg = document.getElementById('chatEmptyMsg');
+    const listPanel = document.getElementById('roomListItems');
+    const placeholder = document.getElementById('chatPlaceholder');
+    const conversation = document.getElementById('chatConversation');
+    const uploadProgress = document.getElementById('uploadProgress');
+
+    if (!token || !userDataRaw) {
+        authMsg.style.display = 'block';
+        return;
+    }
+
+    const currentUser = JSON.parse(userDataRaw);
+    const preselectOrderId = "{{ order_id|default:'' }}";
+    let socket = null;
+    let currentOrderId = null;
+
+    function formatTime(iso) {
+        return new Date(iso).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    let allRooms = [];
+    const searchInput = document.getElementById('roomSearch');
+    let searchTimeout = null;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            loadRooms(query);
+        }, 300);
+    });
+
+    function loadRooms(query = '') {
+        const url = query ? `/chat/rooms/?q=${encodeURIComponent(query)}` : '/chat/rooms/';
+        apiCall(url)
+            .then(res => res.ok ? res.json() : [])
+            .then(rooms => {
+                allRooms = rooms;
+                if (!rooms.length) {
+                    emptyMsg.innerHTML = query ? "Hech narsa topilmadi." : "Hozircha suhbatlar yo'q.";
+                    emptyMsg.style.display = 'block';
+                    listPanel.innerHTML = '';
+                    return;
+                }
+                emptyMsg.style.display = 'none';
+                renderRoomList(rooms);
+                if (preselectOrderId && !query) {
+                    const match = rooms.find(r => String(r.order_id) === String(preselectOrderId));
+                    if (match) openRoom(match);
+                }
+            })
+            .catch(() => {});
+    }
+
+    function renderRoomList(roomsToRender) {
+        listPanel.innerHTML = roomsToRender.map(r => `
+            <div class="room-item" data-order="${r.order_id}">
+                <div class="avatar-circle">${(r.other_user_name || '?').charAt(0).toUpperCase()}</div>
+                <div class="room-item-body">
+                    <div class="room-item-top">
+                        <span class="room-item-name">${escapeHtml(r.other_user_name || 'Foydalanuvchi')}</span>
+                        <span class="room-item-time">${r.last_message_time ? formatTime(r.last_message_time) : ''}</span>
+                    </div>
+                    <div class="room-item-bottom">
+                        <span class="room-item-last">${r.last_message ? escapeHtml(r.last_message) : "Hali xabar yo'q"}</span>
+                        ${r.unread_count ? `<span class="room-item-badge">${r.unread_count}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        listPanel.querySelectorAll('.room-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const room = allRooms.find(r => String(r.order_id) === el.dataset.order);
+                openRoom(room);
+            });
+        });
+    }
+
+    function openRoom(room) {
+        currentOrderId = room.order_id;
+        document.querySelectorAll('.room-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.order === String(room.order_id));
+        });
+
+        document.getElementById('chatApp').classList.add('room-open');
+        placeholder.style.display = 'none';
+        conversation.style.display = 'flex';
+        document.getElementById('chatName').textContent = room.other_user_name || 'Foydalanuvchi';
+        document.getElementById('chatStatus').textContent = 'Onlayn';
+        document.getElementById('chatAvatar').textContent = (room.other_user_name || '?').charAt(0).toUpperCase();
+        document.getElementById('chatMessages').innerHTML = '';
+
+        if (socket) socket.close();
+
+        apiCall(`/chat/${room.order_id}/messages/`)
+            .then(res => res.ok ? res.json() : [])
+            .then(data => {
+                const messages = Array.isArray(data) ? data : (data.results || []);
+                messages.forEach(appendMessage);
+            })
+            .catch(err => console.error('Chat history error:', err));
+
+        const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+        socket = new WebSocket(`${wsProtocol}://${location.host}/ws/chat/${room.order_id}/?token=${token}`);
+        socket.onmessage = (e) => appendMessage(JSON.parse(e.data));
+        socket.onclose = () => console.warn('Chat ulanishi uzildi');
+    }
+
+    function appendMessage(data) {
+        const messagesEl = document.getElementById('chatMessages');
+        const isMine = (data.sender === currentUser.id || data.sender_id === currentUser.id);
+        const div = document.createElement('div');
+        div.className = 'msg ' + (isMine ? 'mine' : 'theirs');
+        
+        if (data.text) {
+            div.classList.add('has-text');
+        }
+        
+        if (data.image) {
+            const img = document.createElement('img');
+            img.src = data.image;
+            img.loading = 'lazy';
+            div.appendChild(img);
+        }
+        if (data.video) {
+            const vid = document.createElement('video');
+            vid.src = data.video;
+            vid.controls = true;
+            vid.preload = 'metadata';
+            div.appendChild(vid);
+        }
+        if (data.voice) {
+            const aud = document.createElement('audio');
+            aud.src = data.voice;
+            aud.controls = true;
+            div.appendChild(aud);
+        }
+
+        if (data.text) {
+            const textEl = document.createElement('div');
+            textEl.className = 'msg-text';
+            textEl.textContent = data.text;
+            div.appendChild(textEl);
+        }
+
+        const meta = document.createElement('small');
+        meta.innerHTML = formatTime(data.created_at) + (isMine ? ' <i class="fa-solid fa-check-double" style="font-size:10px;"></i>' : '');
+        div.appendChild(meta);
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    // ===== TEXT =====
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text || !socket || socket.readyState !== 1) return;
+        socket.send(JSON.stringify({ message: text }));
+        input.value = '';
+    }
+
+    document.getElementById('chatSendBtn').addEventListener('click', sendMessage);
+    document.getElementById('chatInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // ===== FILE (image / video) =====
+    const fileInput = document.getElementById('chatFileInput');
+    document.getElementById('chatAttachBtn').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file || !currentOrderId) return;
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
+        sendFile(file, type, file.name);
+        fileInput.value = '';
+    });
+
+    // ===== VOICE =====
+    let mediaRecorder;
+    let audioChunks = [];
+    const voiceBtn = document.getElementById('chatVoiceBtn');
+
+    voiceBtn.addEventListener('click', async () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            voiceBtn.classList.remove('recording');
+            voiceBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            return;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioChunks = [];
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                audioChunks = [];
+                sendFile(audioBlob, 'voice', 'voice.webm');
+                stream.getTracks().forEach(track => track.stop());
+            };
+            mediaRecorder.start();
+            voiceBtn.classList.add('recording');
+            voiceBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+        } catch (err) {
+            console.error('Mic error:', err);
+            alert("Mikrofonga ruxsat yo'q. Brauzer sozlamalaridan ruxsat bering.");
+        }
+    });
+
+    // ===== UPLOAD =====
+    function sendFile(fileBlob, type, filename) {
+        if (!currentOrderId) return;
+        uploadProgress.style.display = 'block';
+
+        const fd = new FormData();
+        fd.append(type, fileBlob, filename || 'file');
+
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput.value.trim()) {
+            fd.append('text', chatInput.value.trim());
+            chatInput.value = '';
+        }
+
+        fetch(`/chat/${currentOrderId}/upload/`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: fd
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Upload xatosi: ' + res.status);
+            return res.json();
+        })
+        .then(() => {
+            uploadProgress.style.display = 'none';
+        })
+        .catch(err => {
+            console.error('Upload error:', err);
+            uploadProgress.style.display = 'none';
+            alert("Fayl yuklab bo'lmadi. Qayta urinib ko'ring.");
+        });
+    }
+
+    loadRooms();
+});
+</script>
 {% endblock %}

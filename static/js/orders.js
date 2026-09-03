@@ -122,6 +122,7 @@ function renderOrders() {
                 </button>
             `;
         }
+        actionsHtml += `<a href="/chat/${order.id}/" class="action-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">💬 Chat</a>`;
 
         return `
             <div class="order-card" data-status="${order.status}">
@@ -257,3 +258,20 @@ function closeOrderModal() {
 document.getElementById('orderModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'orderModal') closeOrderModal();
 });
+
+
+// ─── INIT FROM URL ──────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const barberId = urlParams.get('barber_id');
+    if (barberId) {
+        setTimeout(() => {
+            const barberInput = document.getElementById('orderBarber');
+            if (barberInput) {
+                barberInput.value = barberId;
+            }
+            openOrderModal();
+        }, 500); // small delay to ensure DOM and auth is ready
+    }
+});
+

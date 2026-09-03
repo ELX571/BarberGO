@@ -2,9 +2,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from face_ai.views import hairstyles_page
+from config.views import profile_view, notifications_view
 from django.conf import settings
 from django.conf.urls.static import static
+from face_ai import views as face_ai_views
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -26,7 +27,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('orders/', include('orders.urls')),
-    path('ai/', include('face_ai.urls')),
+    path('notifications/', include('notifications.urls')),
     
     # Frontend Routes
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
@@ -34,11 +35,12 @@ urlpatterns = [
     path('register/', TemplateView.as_view(template_name='register.html'), name='register'),
     path('create-post/', TemplateView.as_view(template_name='create_post.html'), name='create-post'),
     path('orders-ui/', TemplateView.as_view(template_name='orders.html'), name='orders-ui'),
-    path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
+    path('notifications/', notifications_view, name='notifications'),
     path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
-    path('hairstyles/', hairstyles_page, name='hairstyles'),
-    path('chat/', TemplateView.as_view(template_name='chat.html'), name='chat'),
-    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+    path('hairstyles/', face_ai_views.hairstyles_page, name='hairstyles'),
+    path('chat/', include('chat.urls')),
+    path('profile/', profile_view, name='profile'),
+    path('profile/<int:user_id>/', profile_view, name='public-profile'),
 ]
 
 if settings.DEBUG:

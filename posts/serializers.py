@@ -6,6 +6,9 @@ from posts.models import Post, Comment
 class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+    bookmarks_count = serializers.SerializerMethodField()
+    is_bookmarked = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
 
     class Meta:
@@ -19,6 +22,9 @@ class PostSerializer(serializers.ModelSerializer):
             'user',
             'likes_count',
             'is_liked',
+            'comments_count',
+            'bookmarks_count',
+            'is_bookmarked',
             'created_at',
             'updated_at'
         )
@@ -32,9 +38,20 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_is_liked(self, obj):
         request = self.context.get('request')
-
         if request and request.user.is_authenticated:
             return obj.likes.filter(id=request.user.id).exists()
+        return False
+        
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+
+    def get_bookmarks_count(self, obj):
+        return obj.bookmarks.count()
+
+    def get_is_bookmarked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.bookmarks.filter(id=request.user.id).exists()
         return False
 
 
@@ -75,9 +92,6 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     username=serializers.CharField(source='user.username', read_only=True)
-
-    def comments_count(self, obj):
-        return obj.comments.count()
 
     class Meta:
         model = Comment

@@ -20,7 +20,10 @@ EXPOSE 8000
 ARG BUILD_VERSION=latest
 RUN echo "Version: $BUILD_VERSION"
 
+RUN python manage.py collectstatic --noinput
+
 RUN useradd -m appuser
+RUN mkdir -p /app/media && chown -R appuser:appuser /app /app/media
 USER appuser
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]

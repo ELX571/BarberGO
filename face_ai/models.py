@@ -28,5 +28,9 @@ class Hairstyle(models.Model):
             return self.image.url
         return self.image_url
 
+    class Meta:
+        verbose_name = "Soch turmagi"
+        verbose_name_plural = "Soch turmaklari (Styles)"
+
     def __str__(self):
         return self.name

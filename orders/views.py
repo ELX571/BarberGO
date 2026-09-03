@@ -85,6 +85,12 @@ class OrderViewSet(ModelViewSet):
         order.save(update_fields=['status', 'updated_at'])
         message = self._notify_customer(order, new_status)
 
+        # Hide buttons on barber side
+        if new_status == Order.Status.ACCEPTED:
+            Notifications.objects.filter(order_id=order.id, receptions=request.user).update(description='Ushbu bron qabul qilindi.')
+        elif new_status == Order.Status.CANCELED:
+            Notifications.objects.filter(order_id=order.id, receptions=request.user).update(description='Ushbu bron bekor qilindi.')
+
         return Response(
             {
                 'detail': message,

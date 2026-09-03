@@ -41,11 +41,12 @@ class OrderViewSet(ModelViewSet):
         
         message = f"Sizga {customer_name} tomonidan yangi bron (order) tushdi!"
         Notifications.objects.create(
+            order_id=order.id,
             title="Yangi bron!",
             description=message,
             receptions=order.barber,
         )
-        notify_user(order.barber.id, message)
+        notify_user(order.barber.id, message, order_id=order.id)
 
     def _notify_customer(self, order, new_status):
         barber_name = (
@@ -57,6 +58,7 @@ class OrderViewSet(ModelViewSet):
         message = f'{barber_name} sizning orderingizni {action_text}'
 
         Notifications.objects.create(
+            order_id=order.id,
             title='Order statusi o\'zgardi',
             description=message,
             receptions=order.customer,

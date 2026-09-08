@@ -91,7 +91,7 @@ def ai_analyze_face(request):
 
         # 1-BOSQICH: AI orqali faqat yuz shaklini aniqlaymiz
         response = client.models.generate_content(
-            model='gemini-3.6-flash',
+            model='gemini-1.5-flash',
             contents=[
                 {
                     'role': 'user',
@@ -183,7 +183,7 @@ def ai_chat_text(request):
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model='gemini-3.6-flash',
+            model='gemini-1.5-flash',
             contents=[
                 {
                     'role': 'user',

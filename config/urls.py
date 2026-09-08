@@ -39,6 +39,7 @@ urlpatterns = [
     path('filters/', TemplateView.as_view(template_name='filters.html'), name='filters'),
     path('hairstyles/', face_ai_views.hairstyles_page, name='hairstyles'),
     path('chat/', include('chat.urls')),
+    path('ai/', include('face_ai.urls')),
     path('profile/', profile_view, name='profile'),
     path('profile/<int:user_id>/', profile_view, name='public-profile'),
 ]

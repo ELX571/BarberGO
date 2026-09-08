@@ -203,9 +203,10 @@
                 setTimeout(() => {
                     let html = '✂️ <strong>Sizga mos soch turmaklari:</strong><div class="ai-result-grid">';
                     result.recommendations.forEach(r => {
+                        let svgFallback = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>`;
                         let iconHtml = r.image_url 
-                            ? `<img src="${r.image_url}" alt="${r.name}">`
-                            : `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>`;
+                            ? `<img src="${r.image_url}" alt="${r.name}" onerror="window.aiChat.handleImgErr(this)">`
+                            : svgFallback;
                             
                         html += `
                         <div class="ai-result-card" onclick="window.aiChat.openLightbox('${r.image_url}')">
@@ -333,6 +334,13 @@
             if (!src) return;
             document.getElementById('aiLightboxImg').src = src;
             document.getElementById('aiLightbox').classList.add('open');
+        },
+        handleImgErr: function(img) {
+            let card = img.closest('.ai-result-card');
+            if (card) {
+                card.removeAttribute('onclick');
+            }
+            img.outerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>';
         }
     };
 })();

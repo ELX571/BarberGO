@@ -23,10 +23,14 @@ class Hairstyle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_image_url(self):
-        """Agar ImageField da rasm bo'lsa uni, yo'qsa urlni qaytaradi"""
+        """Agar ImageField da rasm bo'lsa va fayl mavjud bo'lsa uni, yo'qsa urlni qaytaradi"""
         if self.image:
-            return self.image.url
-        return self.image_url
+            try:
+                if self.image.storage.exists(self.image.name):
+                    return self.image.url
+            except Exception:
+                pass
+        return self.image_url if self.image_url else None
 
     class Meta:
         verbose_name = "Soch turmagi"

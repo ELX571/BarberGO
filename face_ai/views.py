@@ -118,31 +118,30 @@ def ai_analyze_face(request):
         detected_shape = ai_data.get('face_shape', 'Oval')
         
         # 2-BOSQICH: Bazadan mos soch turmaklarini qidiramiz
-        # icontains orqali mos keluvchi yuz shaklini izlaymiz (yoki agar topilmasa hammasidan tasodifiy)
         matching_hairstyles = list(Hairstyle.objects.filter(target_face_shapes__icontains=detected_shape))
         
-        # Agar bu yuz shakliga mos 4 ta topilmasa, bazadan boshqa ixtiyoriy turmaklarni ham qo'shamiz
-        if len(matching_hairstyles) < 4:
-            extra = list(Hairstyle.objects.exclude(target_face_shapes__icontains=detected_shape))
-            random.shuffle(extra)
-            matching_hairstyles.extend(extra)
-        
-        # Tasodifiy 4-6 tasini tanlaymiz, shunda foydalanuvchi har safar xilma-xil natija oladi
-        random.shuffle(matching_hairstyles)
-        selected_hairstyles = matching_hairstyles[:6]
-
         recommendations = []
-        for style in selected_hairstyles:
-            recommendations.append({
-                "name": style.name,
-                "description": style.description,
-                "match_percent": random.randint(85, 98),  # Dinamik ishonchlilik
-                "image_url": style.get_image_url()
-            })
+        face_analysis = ai_data.get('face_analysis', 'Yuzingiz chiroyli mutanosiblikka ega.')
+
+        if not matching_hairstyles:
+            # Agar mos soch turmagi topilmasa
+            face_analysis += "<br><br>😔 Afsuski, aynan sizning yuz shaklingizga mos tushuvchi soch turmagi hozircha bizning bazamizda yo'q."
+        else:
+            # Tasodifiy uchtasini tanlaymiz (faqat mos keladiganlaridan)
+            random.shuffle(matching_hairstyles)
+            selected_hairstyles = matching_hairstyles[:6]
+
+            for style in selected_hairstyles:
+                recommendations.append({
+                    "name": style.name,
+                    "description": style.description,
+                    "match_percent": random.randint(85, 98),  # Dinamik ishonchlilik
+                    "image_url": style.get_image_url()
+                })
 
         final_result = {
             "face_shape": detected_shape,
-            "face_analysis": ai_data.get('face_analysis', 'Yuzingiz chiroyli mutanosiblikka ega.'),
+            "face_analysis": face_analysis,
             "recommendations": recommendations
         }
 

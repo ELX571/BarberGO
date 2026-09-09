@@ -141,6 +141,15 @@ a:hover {
 
 
 /* Main Body Layout */
+.main-layout {
+  display: flex;
+  flex: 1;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
 
 /* Premium Sidebar */
 .sidebar {
@@ -234,7 +243,7 @@ a:hover {
 
 /* Content Area */
 .content-area {
-    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    
   flex: 1;
   position: relative;
 }
@@ -301,6 +310,7 @@ a:hover {
 }
 
 .fade-in {
+  opacity: 1;
   animation: fadeIn 0.5s ease-out forwards;
 }
 
@@ -580,7 +590,7 @@ a:hover {
   
   /* Content Area */
   .content-area {
-    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    
     padding: 1rem;
     padding-bottom: 90px;
   }

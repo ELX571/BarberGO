@@ -141,12 +141,6 @@ a:hover {
 
 
 /* Main Body Layout */
-.main-layout {
-  display: flex;
-  flex: 1;
-  padding: 1.5rem;
-  gap: 1.5rem;
-}
 
 /* Premium Sidebar */
 .sidebar {
@@ -310,8 +304,8 @@ a:hover {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0;  }
+  to { opacity: 1;  }
 }
 
 
@@ -519,12 +513,6 @@ a:hover {
   }
 
   /* Main Layout */
-  .main-layout {
-    flex-direction: column;
-    padding: 0;
-    gap: 0;
-    margin-bottom: 85px; /* Safe space for bottom nav */
-  }
 
   /* Premium App-like Bottom Navigation */
   .sidebar {
@@ -693,11 +681,8 @@ input:focus, textarea:focus, select:focus {
 
 /* Animations for page load */
 @keyframes fadeInApp {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-.main-layout {
-    animation: fadeInApp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    0% { opacity: 0;  }
+    100% { opacity: 1;  }
 }
 
 /* Smooth Image Loading */

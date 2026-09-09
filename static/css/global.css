@@ -491,3 +491,83 @@ a:hover {
     background: #16a34a;
     box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
 }
+
+/* =========================================
+   Mobile Responsiveness (Global)
+========================================= */
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar {
+    padding: 0 1rem;
+    height: 60px;
+  }
+  
+  .nav-center {
+    position: static;
+    transform: none;
+    flex-grow: 1;
+    justify-content: center;
+  }
+  
+  .nav-brand span {
+    display: none; /* Hide text, keep logo icon on small screens if space is tight */
+  }
+
+  /* Main Layout */
+  .main-layout {
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+    margin-bottom: 70px; /* Space for bottom nav */
+  }
+
+  /* Sidebar -> Bottom Navigation */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100%;
+    height: 65px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 20px 20px 0 0;
+    padding: 0 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    z-index: 9999;
+    animation: none;
+  }
+  
+  .sidebar-item {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+  }
+  
+  .sidebar-item svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Remove flex-grow space from sidebar */
+  .sidebar div[style*="flex-grow"] {
+    display: none !important;
+  }
+  
+  /* Content Area */
+  .content-area {
+    padding: 1rem;
+    padding-bottom: 90px;
+  }
+
+  .toast-popup {
+    width: 90%;
+    right: 5%;
+    left: 5%;
+    bottom: 80px; /* Above bottom nav */
+  }
+}

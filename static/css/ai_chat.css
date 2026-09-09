@@ -485,3 +485,29 @@
         right: 16px;
     }
 }
+
+@media (max-width: 768px) {
+    .ai-chat-fab {
+        bottom: 85px; /* sit above the bottom nav */
+        right: 15px;
+        width: 55px;
+        height: 55px;
+    }
+    
+    .ai-chat-window {
+        width: calc(100vw - 30px);
+        right: 15px;
+        bottom: 150px;
+        max-height: 60vh;
+    }
+    
+    /* Full screen modal for camera on mobile */
+    .ai-camera-modal .ai-camera-content {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+    .ai-camera-video {
+        border-radius: 0;
+    }
+}

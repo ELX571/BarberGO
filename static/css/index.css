@@ -233,3 +233,45 @@
     color: var(--accent-primary);
     font-weight: 600;
 }
+
+/* =========================================
+   Mobile Responsiveness (Index)
+========================================= */
+@media (max-width: 768px) {
+    .bg-icon {
+        width: 300px;
+        height: 300px;
+        top: 200px;
+    }
+    
+    .search-wrapper {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 8px;
+        text-align: center;
+    }
+    
+    .search-icon {
+        display: none;
+    }
+    
+    .search-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .posts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .home-container {
+        padding-top: 2vh;
+    }
+}

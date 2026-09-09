@@ -25,15 +25,6 @@ function checkAuthState() {
                 
                 if (userRole === 'barber') {
                     if (addPostBtn) addPostBtn.style.display = 'flex';
-                    
-                    const filterSidebarBtn = document.getElementById('filterSidebarBtn');
-                    if (filterSidebarBtn) filterSidebarBtn.style.display = 'none';
-                    
-                    // Prevent direct access to filters page
-                    if (currentPath === '/filters/') {
-                        window.location.href = '/';
-                        return;
-                    }
                 }
             } catch(e) {
                 console.error("Error parsing user data:", e);

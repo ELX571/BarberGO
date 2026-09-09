@@ -595,3 +595,23 @@
         box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4) !important;
     }
 }
+
+/* AI Chat Polishing */
+.ai-chat-window {
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.ai-message.user {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+}
+
+.ai-message.bot {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}

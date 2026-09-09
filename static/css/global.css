@@ -596,3 +596,117 @@ a:hover {
     border-radius: 20px;
   }
 }
+
+/* =========================================
+   Ultra-Premium UI Foundations (Global)
+========================================= */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.03em;
+    font-weight: 800;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.6);
+}
+
+/* Universal Input Styling */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+    border-color: var(--accent-primary);
+    transition: all 0.3s ease;
+}
+
+/* Beautiful Desktop Navbar & Sidebar Enhancements */
+@media (min-width: 769px) {
+    .navbar {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+    }
+    
+    .sidebar {
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+    }
+    
+    .sidebar-item {
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+    }
+    
+    .sidebar-item:hover {
+        transform: translateY(-4px) scale(1.05);
+        background: rgba(249, 115, 22, 0.05);
+    }
+    
+    .sidebar-item.active {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+        color: white;
+        box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+    }
+}
+
+/* Pulsating + Button */
+.add-btn {
+    position: relative;
+    overflow: hidden;
+}
+.add-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.add-btn:active::after {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Animations for page load */
+@keyframes fadeInApp {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.main-layout {
+    animation: fadeInApp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth Image Loading */
+img {
+    transition: opacity 0.5s ease-in-out;
+}
+img[loading] {
+    opacity: 0;
+}
+img.loaded {
+    opacity: 1;
+}

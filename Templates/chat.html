@@ -4,6 +4,8 @@
 
 {% block extra_css %}
 <style>
+.ai-chat-btn { display: none !important; }
+
 /* ========== CHAT LAYOUT ========== */
 .chat-app {
     display: flex;
@@ -276,6 +278,7 @@
         <div id="chatConversation" style="display:none; flex-direction:column; height:100%;">
             <div class="chat-active-header">
                 <div class="chat-active-who">
+                    <button id="backToListBtn" class="chat-icon-btn" style="display:none;" onclick="closeRoom()"><i class="fa-solid fa-arrow-left"></i></button>
                     <div class="avatar-circle" id="chatAvatar">?</div>
                     <div>
                         <div class="chat-active-name" id="chatName">—</div>
@@ -394,6 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+function closeRoom() {
+    document.getElementById("chatApp").classList.remove("room-open");
+    if (socket) { socket.close(); socket = null; }
+}
+
     function openRoom(room) {
         currentOrderId = room.order_id;
         document.querySelectorAll('.room-item').forEach(el => {
@@ -401,6 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.getElementById('chatApp').classList.add('room-open');
+        document.getElementById('backToListBtn').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
         placeholder.style.display = 'none';
         conversation.style.display = 'flex';
         document.getElementById('chatName').textContent = room.other_user_name || 'Foydalanuvchi';
@@ -437,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.image) {
             const img = document.createElement('img');
             img.src = data.image;
-            img.loading = 'lazy';
+            img.loading = 'lazy'; img.onload = () => img.classList.add('loaded'); img.onerror = () => img.classList.add('loaded');
             div.appendChild(img);
         }
         if (data.video) {

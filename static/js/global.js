@@ -328,3 +328,37 @@ window.togglePostBookmarkGlobal = async function(postId) {
         });
     } catch(e) { console.error(e); }
 };
+
+/* Global Search Modal Logic */
+window.openGlobalSearch = function(e) {
+    if(e) e.preventDefault();
+    const modal = document.getElementById('globalSearchModal');
+    if(modal) {
+        modal.classList.add('open');
+        setTimeout(() => {
+            document.getElementById('globalSearchInput').focus();
+        }, 100);
+    }
+};
+
+window.closeGlobalSearch = function() {
+    const modal = document.getElementById('globalSearchModal');
+    if(modal) {
+        modal.classList.remove('open');
+    }
+};
+
+window.handleGlobalSearch = function(e) {
+    if(e.key === 'Enter') {
+        e.preventDefault();
+        const query = document.getElementById('globalSearchInput').value.trim();
+        if(query) {
+            triggerGlobalSearch(query);
+        }
+    }
+};
+
+window.triggerGlobalSearch = function(query) {
+    closeGlobalSearch();
+    window.location.href = '/?search=' + encodeURIComponent(query);
+};

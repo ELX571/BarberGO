@@ -525,22 +525,24 @@ a:hover {
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    border-radius: 24px 24px 0 0;
+    border-radius: 28px 28px 0 0;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.7);
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.03), inset 0 1px 1px rgba(255,255,255,0.9);
     padding: 0 10px;
     padding-bottom: env(safe-area-inset-bottom, 15px);
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.06);
     z-index: 9999;
-    animation: none;
   }
   
   .sidebar-item {
     width: 42px;
     height: 45px;
+  flex-shrink: 0;
     border-radius: 16px;
     background: transparent;
     color: #94a3b8;
@@ -697,30 +699,211 @@ img.loaded {
 }
 
 /* Prominent Center Action Button (Mobile Bottom Nav) */
+}
+
+/* Sleek In-Navbar Highlight for Center Action */
 @media (max-width: 768px) {
     .sidebar-item.center-action {
-        position: relative;
-        top: -15px; /* Lift it up */
-        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
-        color: white !important;
-        width: 56px !important;
-        height: 56px !important;
-        border-radius: 50% !important; /* Make it perfectly round */
-        box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4);
-        border: 4px solid #f8fafc; /* Create a cutout effect */
-        z-index: 10001;
+        background: rgba(249, 115, 22, 0.1);
+        color: var(--accent-primary) !important;
+        border-radius: 14px;
+        flex-shrink: 0;
+        width: 46px !important;
+        height: 46px !important;
+        box-shadow: inset 0 0 0 1px rgba(249, 115, 22, 0.2);
     }
     
-    /* Make sure SVG icon is crisp inside the prominent button */
     .sidebar-item.center-action svg {
-        width: 26px;
-        height: 26px;
-        color: white;
+        width: 22px !important;
+        height: 22px !important;
+        color: var(--accent-primary) !important;
     }
     
-    /* Active state for prominent button */
     .sidebar-item.center-action.active {
-        box-shadow: 0 10px 30px rgba(249, 115, 22, 0.6);
-        transform: translateY(-2px);
+        background: var(--accent-primary) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
     }
+    
+    .sidebar-item.center-action.active svg {
+        color: white !important;
+    }
+}
+
+/* Ultra-premium tap interactions */
+@media (max-width: 768px) {
+    .sidebar-item {
+        position: relative;
+        overflow: hidden;
+    }
+    .sidebar-item::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(249, 115, 22, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    }
+    .sidebar-item:active::after {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+        transition: 0s;
+    }
+}
+
+/* Subtle Gradient Mesh Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.03) 0%, transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Global Search Modal (Ultra Premium) */
+.search-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.95) 100%);
+    backdrop-filter: blur(30px) saturate(250%);
+    -webkit-backdrop-filter: blur(30px) saturate(250%);
+    z-index: 9990;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.search-modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-modal-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+    padding-top: max(30px, env(safe-area-inset-top, 30px));
+    padding-bottom: 120px;
+    transform: translateY(-30px) scale(0.98);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-modal-overlay.open .search-modal-container {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.search-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 35px;
+}
+
+.search-modal-input-box {
+    flex-grow: 1;
+    background: white;
+    border-radius: 20px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 40px rgba(249, 115, 22, 0.1), inset 0 2px 4px rgba(255,255,255,0.9);
+    border: 1px solid rgba(249, 115, 22, 0.2);
+    transition: all 0.3s ease;
+}
+
+.search-modal-input-box:focus-within {
+    box-shadow: 0 15px 50px rgba(249, 115, 22, 0.15), inset 0 2px 4px rgba(255,255,255,0.9);
+    border-color: rgba(249, 115, 22, 0.5);
+    transform: translateY(-2px);
+}
+
+.search-modal-input-box svg {
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+
+#globalSearchInput {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 18px;
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+#globalSearchInput::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.search-modal-cancel {
+    background: rgba(249, 115, 22, 0.1);
+    border: none;
+    color: var(--accent-primary);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 12px 18px;
+    border-radius: 16px;
+    transition: all 0.2s;
+}
+
+.search-modal-cancel:active {
+    transform: scale(0.9);
+    background: rgba(249, 115, 22, 0.2);
+}
+
+.search-suggestions h4 {
+    font-size: 13px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    font-weight: 800;
+}
+
+.search-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.search-tags span {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(249, 115, 22, 0.05));
+    border: 1px solid rgba(249, 115, 22, 0.15);
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.05);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-tags span:active {
+    transform: scale(0.92) translateY(2px);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    color: white;
+    box-shadow: 0 2px 5px rgba(249, 115, 22, 0.2);
 }

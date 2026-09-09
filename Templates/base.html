@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BarberGo{% endblock %}</title>
     
-    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}?v=999">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}?v=1005">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +14,8 @@
     <!-- AOS Animation CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=999">
-    <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}?v=999">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=1005">
+    <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}?v=1005">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     {% block extra_css %}{% endblock %}
 </head>
@@ -60,7 +60,7 @@
             <a href="/orders-ui/" class="sidebar-item" title="Buyurtmalar (Orders)">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
             </a>
-            <a href="/filters/" class="sidebar-item" id="filterSidebarBtn" title="Filtrlar (Qidiruv)">
+            <a href="#" class="sidebar-item" id="filterSidebarBtn" title="Qidiruv" onclick="openGlobalSearch(event)">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </a>
             
@@ -87,6 +87,30 @@
             {% block content %}
             {% endblock %}
         </main>
+    </div>
+</div>
+
+<!-- Global Search Modal -->
+<div id="globalSearchModal" class="search-modal-overlay">
+    <div class="search-modal-container">
+        <div class="search-modal-header">
+            <div class="search-modal-input-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="search" id="globalSearchInput" placeholder="Sartarosh yoki xizmat qidiring..." onkeypress="handleGlobalSearch(event)">
+            </div>
+            <button class="search-modal-cancel" onclick="closeGlobalSearch()">Bekor qilish</button>
+        </div>
+        <div class="search-modal-body">
+            <div class="search-suggestions">
+                <h4>Ommabop qidiruvlar</h4>
+                <div class="search-tags">
+                    <span onclick="triggerGlobalSearch('Fade')">Fade tekislash</span>
+                    <span onclick="triggerGlobalSearch('Soqol')">Soqol olish</span>
+                    <span onclick="triggerGlobalSearch('Massaj')">Bosh uqalash</span>
+                    <span onclick="triggerGlobalSearch('Bolalar')">Bolalar soch turmagi</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -121,8 +145,8 @@
 </div>
 
 <!-- Scripts -->
-<script src="{% static 'js/ai_chat.js' %}?v=999"></script>
-<script src="{% static 'js/global.js' %}?v=999"></script>
+<script src="{% static 'js/ai_chat.js' %}?v=1005"></script>
+<script src="{% static 'js/global.js' %}?v=1005"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     // Global Toast Logic

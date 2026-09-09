@@ -4,7 +4,7 @@
 {% block title %}BarberGo - Bosh Sahifa{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}?v=999">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=1005">
 <style>
     /* Forcing the style update directly in HTML to bypass aggressive browser cache */
     .bg-icon {
@@ -33,7 +33,7 @@
     </svg>
 
     <!-- Search Bar -->
-    <div class="search-wrapper" data-aos="fade-down" data-aos-delay="200">
+    <div class="search-wrapper">
         <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="search" class="search-input" placeholder="Kerakli sartarosh yoki xizmatni qidiring...">
         <button class="search-btn">
@@ -70,5 +70,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/posts.js' %}?v=999"></script>
+<script src="{% static 'js/posts.js' %}?v=1005"></script>
 {% endblock %}

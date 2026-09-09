@@ -493,13 +493,18 @@ a:hover {
 }
 
 /* =========================================
-   Mobile Responsiveness (Global)
+   Mobile Responsiveness (Global Premium)
 ========================================= */
 @media (max-width: 768px) {
-  /* Navbar */
+  /* Glassmorphic Navbar */
   .navbar {
     padding: 0 1rem;
-    height: 60px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    box-shadow: none;
   }
   
   .nav-center {
@@ -510,7 +515,7 @@ a:hover {
   }
   
   .nav-brand span {
-    display: none; /* Hide text, keep logo icon on small screens if space is tight */
+    display: none;
   }
 
   /* Main Layout */
@@ -518,41 +523,60 @@ a:hover {
     flex-direction: column;
     padding: 0;
     gap: 0;
-    margin-bottom: 70px; /* Space for bottom nav */
+    margin-bottom: 85px; /* Safe space for bottom nav */
   }
 
-  /* Sidebar -> Bottom Navigation */
+  /* Premium App-like Bottom Navigation */
   .sidebar {
     position: fixed;
     bottom: 0;
     left: 0;
     top: auto;
     width: 100%;
-    height: 65px;
+    height: calc(65px + env(safe-area-inset-bottom, 15px));
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    border-radius: 20px 20px 0 0;
+    border-radius: 24px 24px 0 0;
     padding: 0 10px;
-    background: rgba(255, 255, 255, 0.95);
+    padding-bottom: env(safe-area-inset-bottom, 15px);
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: none;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.06);
     z-index: 9999;
     animation: none;
   }
   
   .sidebar-item {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    background: transparent;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .sidebar-item.active {
+    color: var(--accent-primary);
+    background: rgba(249, 115, 22, 0.1);
+    transform: translateY(-2px);
   }
   
   .sidebar-item svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   
+  .sidebar-item.active svg {
+    transform: scale(1.1);
+  }
+
   /* Remove flex-grow space from sidebar */
   .sidebar div[style*="flex-grow"] {
     display: none !important;
@@ -565,9 +589,10 @@ a:hover {
   }
 
   .toast-popup {
-    width: 90%;
-    right: 5%;
-    left: 5%;
-    bottom: 80px; /* Above bottom nav */
+    width: 92%;
+    right: 4%;
+    left: 4%;
+    bottom: 90px;
+    border-radius: 20px;
   }
 }

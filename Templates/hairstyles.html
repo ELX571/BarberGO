@@ -10,13 +10,13 @@
 {% block content %}
 <div class="hairstyles-page fade-in">
     
-    <div class="hairstyles-header" data-aos="fade-down">
+    <div class="hairstyles-header">
         <h1>Soch Turmaklari Katalo'gi</h1>
-        <p>O'zingizga eng mos keladigan uslubni toping va ustangizga ko'rsating</p>
+        <p>O'zingizga eng mos keladigan uslubni toping va barberingizga ko'rsating</p>
     </div>
 
     <!-- Category Filters -->
-    <div class="hairstyles-categories" data-aos="fade-up" data-aos-delay="100">
+    <div class="hairstyles-categories">
         <button class="category-btn active" onclick="filterCategory(this, 'all')">Barchasi</button>
         <button class="category-btn" onclick="filterCategory(this, 'classic')">Klassik</button>
         <button class="category-btn" onclick="filterCategory(this, 'modern')">Zamonaviy</button>
@@ -27,7 +27,7 @@
     <!-- Grid of Styles -->
     <div class="hairstyles-grid">
         {% for style in hairstyles %}
-        <div class="hairstyle-card" data-category="{{ style.category }}" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:'1' }}00">
+        <div class="hairstyle-card" data-category="{{ style.category }}">
             <div class="hairstyle-img-wrapper" style="height: 250px; overflow: hidden;">
                 {% if style.image %}
                     <img src="{{ style.image.url }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover;">

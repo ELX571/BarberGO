@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     localStorage.setItem("access_token", data.access_token);
+                    document.cookie = "access_token=" + data.access_token + "; path=/; max-age=86400;";
                     localStorage.setItem("refresh_token", data.refresh_token);
                     localStorage.setItem("user_data", JSON.stringify(data.user));
                     window.location.href = "/";
@@ -141,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     localStorage.setItem("access_token", data.access_token);
+                    document.cookie = "access_token=" + data.access_token + "; path=/; max-age=86400;"
                     localStorage.setItem("refresh_token", data.refresh_token);
                     localStorage.setItem("user_data", JSON.stringify(data.user));
                     window.location.href = "/";

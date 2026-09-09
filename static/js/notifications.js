@@ -41,6 +41,7 @@ function connectWebSocket() {
                     id: Date.now(),
                     title: 'Yangi bildirishnoma',
                     message: data.message || data.text || 'Yangi xabar keldi',
+                    order_id: data.order_id || null,
                     time: new Date().toISOString(),
                     read: false
                 };
@@ -131,8 +132,14 @@ function renderNotifications() {
                     <div class="notif-message">${escapeHtml(n.message)}</div>
                     <div class="notif-time">${timeAgo}</div>
                 </div>
+
                 <div class="notif-actions-inline">
+                    ${n.order_id && !n.message.includes('qabul qildi') && !n.message.includes('bekor qildi') ? `
+                        <button class="action-btn accept-btn" onclick="event.stopPropagation(); changeOrderStatus(${n.order_id}, 'accept')" style="background: rgba(34,197,94,0.1); color: #22c55e; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; font-size:12px;">Qabul qilish</button>
+                        <button class="action-btn cancel-btn" onclick="event.stopPropagation(); changeOrderStatus(${n.order_id}, 'cancel')" style="background: rgba(239,68,68,0.1); color: #ef4444; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 8px; font-size:12px;">Bekor qilish</button>
+                    ` : ''}
                     <button class="notif-dismiss" onclick="event.stopPropagation(); removeNotification(${i})" title="O'chirish">
+
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
@@ -223,4 +230,29 @@ function show(id) {
 function hide(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
+}
+
+
+// ─── ACCEPT / CANCEL ORDER FROM NOTIFICATION ───
+window.changeOrderStatus = window.changeOrderStatus || async function(orderId, action) {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+    try {
+        const response = await fetch(`/orders/${orderId}/${action}/`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            alert('Buyurtma holati o\'zgartirildi!');
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.detail || data.error || 'Xatolik yuz berdi');
+        }
+    } catch (e) {
+        alert('Tarmoq xatosi.');
+    }
 }

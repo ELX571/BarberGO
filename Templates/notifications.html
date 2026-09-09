@@ -4,14 +4,14 @@
 {% block title %}Bildirishnomalar - BarberGo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/notifications.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/notifications.css' %}?v=1011">
 {% endblock %}
 
 {% block content %}
 <div class="notif-page fade-in">
-    <div class="notif-header" data-aos="fade-down">
+    <div class="notif-header">
         <!-- Connection Status (Left) -->
-        <div class="ws-status" id="wsStatus" data-aos="fade-right">
+        <div class="ws-status" id="wsStatus">
             <span class="ws-dot" id="wsDot"></span>
             <span id="wsText">Ulanmoqda...</span>
         </div>
@@ -33,7 +33,7 @@
     <div id="notifList" class="notif-list"></div>
 
     <!-- Empty State -->
-    <div id="notifEmpty" class="notif-empty" style="display:none;" data-aos="zoom-in" data-aos-delay="100">
+    <div id="notifEmpty" class="notif-empty" style="display:none;">
         <div class="bell-icon-wrapper">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
         </div>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Auth Required -->
-    <div id="notifAuth" class="notif-empty" style="display:none;" data-aos="zoom-in">
+    <div id="notifAuth" class="notif-empty" style="display:none;">
         <div class="bell-icon-wrapper">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
@@ -58,5 +58,43 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/notifications.js' %}?v=1"></script>
+<script>
+    async function fetchMissedNotifications() {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+        
+        try {
+            const res = await fetch('/notifications/api/', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const dbNotifs = await res.json();
+                let local = JSON.parse(localStorage.getItem('barbergo_notifications')) || [];
+                let changed = false;
+                
+                dbNotifs.reverse().forEach(dbN => {
+                    const exists = local.find(lN => lN.message === dbN.message && Math.abs(new Date(lN.time) - new Date(dbN.time)) < 60000);
+                    if (!exists) {
+                        local.unshift(dbN);
+                        changed = true;
+                    }
+                });
+                
+                if (changed) {
+                    if (local.length > 100) local.length = 100;
+                    localStorage.setItem('barbergo_notifications', JSON.stringify(local));
+                    if (typeof renderNotifications === 'function') {
+                        renderNotifications();
+                    }
+                }
+            }
+        } catch(e) {
+            console.error('Failed to fetch DB notifications', e);
+        }
+    }
+    
+    // Call it before connecting websocket
+    document.addEventListener('DOMContentLoaded', fetchMissedNotifications);
+</script>
+<script src="{% static 'js/notifications.js' %}?v=1011"></script>
 {% endblock %}

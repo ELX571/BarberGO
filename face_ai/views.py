@@ -82,10 +82,12 @@ def ai_analyze_face(request):
         if not image_data:
             return JsonResponse({'error': True, 'message': 'Rasm yuborilmadi'}, status=400)
 
-        if ',' in image_data:
-            image_data = image_data.split(',', 1)[1]
-
-        image_bytes = base64.b64decode(image_data)
+        mime_type = 'image/jpeg'
+        if image_data.startswith('data:'):
+            header, base64_str = image_data.split(';base64,')
+            mime_type = header.replace('data:', '')
+        else:
+            base64_str = image_data
 
         client = genai.Client(api_key=api_key)
 
@@ -99,8 +101,8 @@ def ai_analyze_face(request):
                         {'text': SYSTEM_PROMPT},
                         {
                             'inline_data': {
-                                'mime_type': 'image/jpeg',
-                                'data': base64.b64encode(image_bytes).decode('utf-8')
+                                'mime_type': mime_type,
+                                'data': base64_str
                             }
                         }
                     ]
@@ -118,31 +120,30 @@ def ai_analyze_face(request):
         detected_shape = ai_data.get('face_shape', 'Oval')
         
         # 2-BOSQICH: Bazadan mos soch turmaklarini qidiramiz
-        # icontains orqali mos keluvchi yuz shaklini izlaymiz (yoki agar topilmasa hammasidan tasodifiy)
         matching_hairstyles = list(Hairstyle.objects.filter(target_face_shapes__icontains=detected_shape))
         
-        # Agar bu yuz shakliga mos 4 ta topilmasa, bazadan boshqa ixtiyoriy turmaklarni ham qo'shamiz
-        if len(matching_hairstyles) < 4:
-            extra = list(Hairstyle.objects.exclude(target_face_shapes__icontains=detected_shape))
-            random.shuffle(extra)
-            matching_hairstyles.extend(extra)
-        
-        # Tasodifiy 4-6 tasini tanlaymiz, shunda foydalanuvchi har safar xilma-xil natija oladi
-        random.shuffle(matching_hairstyles)
-        selected_hairstyles = matching_hairstyles[:6]
-
         recommendations = []
-        for style in selected_hairstyles:
-            recommendations.append({
-                "name": style.name,
-                "description": style.description,
-                "match_percent": random.randint(85, 98),  # Dinamik ishonchlilik
-                "image_url": style.get_image_url()
-            })
+        face_analysis = ai_data.get('face_analysis', 'Yuzingiz chiroyli mutanosiblikka ega.')
+
+        if not matching_hairstyles:
+            # Agar mos soch turmagi topilmasa
+            face_analysis += "<br><br>😔 Afsuski, aynan sizning yuz shaklingizga mos tushuvchi soch turmagi hozircha bizning bazamizda yo'q."
+        else:
+            # Tasodifiy uchtasini tanlaymiz (faqat mos keladiganlaridan)
+            random.shuffle(matching_hairstyles)
+            selected_hairstyles = matching_hairstyles[:6]
+
+            for style in selected_hairstyles:
+                recommendations.append({
+                    "name": style.name,
+                    "description": style.description,
+                    "match_percent": random.randint(85, 98),  # Dinamik ishonchlilik
+                    "image_url": style.get_image_url()
+                })
 
         final_result = {
             "face_shape": detected_shape,
-            "face_analysis": ai_data.get('face_analysis', 'Yuzingiz chiroyli mutanosiblikka ega.'),
+            "face_analysis": face_analysis,
             "recommendations": recommendations
         }
 

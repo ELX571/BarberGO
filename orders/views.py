@@ -31,7 +31,22 @@ class OrderViewSet(ModelViewSet):
         return Order.objects.none()
 
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user)
+        order = serializer.save(customer=self.request.user)
+        
+        customer_name = (
+            self.request.user.get_full_name().strip()
+            or self.request.user.first_name.strip()
+            or self.request.user.username
+        )
+        
+        message = f"Sizga {customer_name} tomonidan yangi bron (order) tushdi!"
+        Notifications.objects.create(
+            order_id=order.id,
+            title="Yangi bron!",
+            description=message,
+            receptions=order.barber,
+        )
+        notify_user(order.barber.id, message, order_id=order.id)
 
     def _notify_customer(self, order, new_status):
         barber_name = (
@@ -39,10 +54,11 @@ class OrderViewSet(ModelViewSet):
             or order.barber.first_name.strip()
             or order.barber.username
         )
-        action_text = 'accept qildi' if new_status == Order.Status.ACCEPTED else 'cancel qildi'
-        message = f'{barber_name} sizning orderingizni {action_text}'
+        action_text = 'qabul qildi' if new_status == Order.Status.ACCEPTED else 'bekor qildi'
+        message = f'Sartarosh {barber_name} sizning brongizni {action_text}.'
 
         Notifications.objects.create(
+            order_id=order.id,
             title='Order statusi o\'zgardi',
             description=message,
             receptions=order.customer,
@@ -68,6 +84,12 @@ class OrderViewSet(ModelViewSet):
         order.status = new_status
         order.save(update_fields=['status', 'updated_at'])
         message = self._notify_customer(order, new_status)
+
+        # Hide buttons on barber side
+        if new_status == Order.Status.ACCEPTED:
+            Notifications.objects.filter(order_id=order.id, receptions=request.user).update(description='Ushbu bron qabul qilindi.')
+        elif new_status == Order.Status.CANCELED:
+            Notifications.objects.filter(order_id=order.id, receptions=request.user).update(description='Ushbu bron bekor qilindi.')
 
         return Response(
             {

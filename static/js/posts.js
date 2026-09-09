@@ -102,12 +102,29 @@ function resolveMediaUrl(url) {
 }
 
 function createPostCard(post) {
-    // Assuming post has id, title, description/excerpt, image/photo, author etc based on standard DRF models.
+    let currentUserId = null;
+    try {
+        const uData = JSON.parse(localStorage.getItem('user_data'));
+        if (uData && uData.id) currentUserId = uData.id;
+    } catch(e) {}
+    
+    const userObj = post.user || {};
     const title = post.title || post.name || 'Barber Post';
     const excerpt = post.description || post.text || post.content || 'Check out this awesome barber style.';
     const imageUrl = resolveMediaUrl(post.image || post.photo) || 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-    const author = post.author?.first_name || post.barber?.first_name || 'Expert Barber';
+    
+    let authorName = userObj.first_name;
+    if (userObj.last_name) authorName += ' ' + userObj.last_name;
+    if (!authorName || authorName.trim() === '') authorName = userObj.username || 'Expert Barber';
+    
+    const avatarUrl = userObj.avatar || '/media/avatars/default.jpg';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString() : 'Recently';
+
+    const likesCount = post.likes_count || 0;
+    const isLiked = post.is_liked || false;
+    const commentsCount = post.comments_count || 0;
+    const bookmarksCount = post.bookmarks_count || 0;
+    const isBookmarked = post.is_bookmarked || false;
 
     return `
         <div class="post-card glass-panel fade-in" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
@@ -115,10 +132,34 @@ function createPostCard(post) {
             <div class="post-content">
                 <h3 class="post-title">${title}</h3>
                 <p class="post-excerpt">${excerpt}</p>
-                <div class="post-meta">
-                    <span>By ${author}</span>
-                    <span>${date}</span>
+                <div class="post-meta" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <a href="/profile/${userObj.id}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+                        <img src="${avatarUrl}" alt="avatar" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random'">
+                        <span class="author" style="font-weight:600;">${authorName}</span>
+                    </a>
+                    <span class="date" style="color:var(--text-muted); font-size:12px;">${date}</span>
                 </div>
+                
+                <div class="post-actions" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f3f4f6; padding-top:12px; margin-top:12px;">
+                    <div style="display:flex; gap:16px;">
+                        <button class="post-action-btn post-like-btn-${post.id}" onclick="togglePostLikeGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isLiked ? '#ef4444' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                            <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i>
+                            <span class="like-count">${likesCount}</span>
+                        </button>
+                        <button class="post-action-btn post-comment-btn-${post.id}" onclick="openCommentsModalGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:#6b7280; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                            <i class="fa-regular fa-comment"></i>
+                            <span class="comment-count">${commentsCount}</span>
+                        </button>
+                    </div>
+                    <button class="post-action-btn post-bookmark-btn-${post.id}" onclick="togglePostBookmarkGlobal(${post.id})" style="background:none; border:none; cursor:pointer; font-size:15px; color:${isBookmarked ? '#3b82f6' : '#6b7280'}; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                    </button>
+                </div>
+                ${(currentUserId !== userObj.id) ? `
+                <button class="btn btn-primary" style="width:100%; margin-top:16px; border-radius:12px; font-weight:600; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(249,115,22,0.25);" onclick="openContactModal(${userObj.id}, '${authorName}', '${userObj.phone_number || ''}', '${avatarUrl}')">
+                    <i class="fa-solid fa-${userObj.role === 'customer' ? 'phone' : 'calendar-check'}" style="font-size:14px;"></i> ${userObj.role === 'customer' ? "Mijoz bilan bog'lanish" : "Bron qilish"}
+                </button>
+                ` : ''}
             </div>
         </div>
     `;

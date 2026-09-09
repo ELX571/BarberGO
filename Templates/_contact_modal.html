@@ -1,0 +1,35 @@
+<!-- Contact Barber Modal -->
+<div id="contactModal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: #ffffff; padding: 30px; border-radius: 16px; width: 90%; max-width: 340px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: modalPop 0.2s ease-out;">
+        <button onclick="closeContactModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 24px; color: #64748b; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
+        
+        <div style="width: 64px; height: 64px; margin: 0 auto 16px;">
+            <img id="contactModalAvatar" src="/media/avatars/default.jpg" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #f97316;" onerror="this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(document.getElementById('contactModalName').innerText) + '&background=random'">
+        </div>
+        
+        <h3 style="font-size: 20px; margin-bottom: 8px; color: #0f172a; font-weight: 700; font-family: 'Inter', sans-serif;" id="contactModalName">Barber bilan bog'lanish</h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-family: 'Inter', sans-serif;">Qanday usulda bron qilishni xohlaysiz?</p>
+        
+        <div id="contactModalPhoneWrapper" style="display: none; background: #f8fafc; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0;">
+            <span id="contactModalPhone" style="font-size: 16px; font-weight: 600; color: #0f172a; font-family: 'Inter', sans-serif;"></span>
+            <button onclick="copyContactPhone()" style="background: transparent; border: none; color: #f97316; cursor: pointer; font-size: 14px; font-weight: 600; padding: 4px 8px; display: flex; align-items: center; gap: 4px;">
+                <i class="fa-regular fa-copy"></i> Nusxa
+            </button>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button id="contactModalChatBtn" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#e2e8f0'" onmouseout="this.style.backgroundColor='#f8fafc'" onclick="startChatFromContact()">
+                <i class="fa-regular fa-message" style="color: #f97316;"></i> Chat orqali bron qilish
+            </button>
+            <button id="contactModalOrderBtn" style="background: #f97316; color: white; border: none; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#f97316'" onclick="startOrderFromContact()">
+                <i class="fa-regular fa-calendar-check"></i> Oddiy bron (Order qilish)
+            </button>
+        </div>
+    </div>
+</div>
+<style>
+@keyframes modalPop {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+</style>

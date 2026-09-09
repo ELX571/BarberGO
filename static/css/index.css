@@ -239,45 +239,15 @@
 ========================================= */
 @media (max-width: 768px) {
     /* Hide the BarberGo logo on home page to make room for Search Bar */
-    .navbar .nav-center {
-        display: none !important;
-    }
-
-    .bg-icon {
-        width: 250px;
-        height: 250px;
-        top: 250px;
-        opacity: 0.1;
-    }
-    
-    /* iOS Style Search Bar in Navbar */
+    /* BarberGo Logo is preserved, Search Bar sits below it in standard flow */
+    /* Hide search-wrapper completely since we use the Global Search Modal from bottom nav */
     .search-wrapper {
-        position: fixed !important;
-        top: 12px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        width: calc(100% - 110px) !important;
-        z-index: 10000 !important; /* higher than navbar */
-        flex-direction: row !important;
-        border-radius: 20px !important;
-        padding: 4px 12px !important;
-        height: 40px !important;
-        background: rgba(241, 245, 249, 0.7) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border: 1px solid rgba(255,255,255,0.7) !important;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.06), inset 0 2px 5px rgba(255,255,255,0.8) !important;
-        border: none !important;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
-        display: flex !important;
-        align-items: center !important;
+        display: none !important;
     }
     
     .search-input {
         width: 100%;
-        padding: 0;
+        padding: 0 10px;
         text-align: left;
         font-size: 0.95rem;
         color: var(--text-primary);
@@ -405,15 +375,6 @@
 
 @media (max-width: 768px) {
     /* iOS Spotlight Focus Effect */
-    .search-wrapper {
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    }
-    .search-wrapper:focus-within {
-        width: calc(100% - 30px) !important;
-        background: #ffffff !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-        border: 1px solid rgba(249, 115, 22, 0.3) !important;
-    }
     
     /* Bouncy active state for bottom nav */
     .sidebar-item:active {
@@ -445,5 +406,14 @@
     }
     .search-icon {
         display: none !important; /* Hide the dummy left icon */
+    }
+}
+
+@media (max-width: 768px) {
+    .bg-icon {
+        width: 250px;
+        height: 250px;
+        top: 250px;
+        opacity: 0.1;
     }
 }

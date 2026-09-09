@@ -6,16 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BarberGo{% endblock %}</title>
     
-    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}?v=1010">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}?v=1011">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=1010">
-    <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}?v=1010">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=1011">
+    <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}?v=1011">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     {% block extra_css %}{% endblock %}
 </head>
@@ -145,9 +144,8 @@
 </div>
 
 <!-- Scripts -->
-<script src="{% static 'js/ai_chat.js' %}?v=1010"></script>
-<script src="{% static 'js/global.js' %}?v=1010"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="{% static 'js/ai_chat.js' %}?v=1011"></script>
+<script src="{% static 'js/global.js' %}?v=1011"></script>
 <script>
     // Global Toast Logic
     function showGlobalToast() {
@@ -169,12 +167,6 @@
     }
 
     // Initialize AOS Animation Library
-    AOS.init({
-        duration: 800,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 50
-    });
 
     // Update active sidebar item based on URL
     document.addEventListener('DOMContentLoaded', () => {

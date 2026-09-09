@@ -82,10 +82,13 @@ def ai_analyze_face(request):
         if not image_data:
             return JsonResponse({'error': True, 'message': 'Rasm yuborilmadi'}, status=400)
 
-        if ',' in image_data:
-            image_data = image_data.split(',', 1)[1]
-
-        image_bytes = base64.b64decode(image_data)
+        mime_type = 'image/jpeg'
+        if image_data.startswith('data:'):
+            header, base64_str = image_data.split(';base64,')
+            mime_type = header.replace('data:', '')
+            image_bytes = base64.b64decode(base64_str)
+        else:
+            image_bytes = base64.b64decode(image_data)
 
         client = genai.Client(api_key=api_key)
 
@@ -99,8 +102,8 @@ def ai_analyze_face(request):
                         {'text': SYSTEM_PROMPT},
                         {
                             'inline_data': {
-                                'mime_type': 'image/jpeg',
-                                'data': base64.b64encode(image_bytes).decode('utf-8')
+                                'mime_type': mime_type,
+                                'data': image_bytes
                             }
                         }
                     ]

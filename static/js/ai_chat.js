@@ -279,6 +279,14 @@
     function openCamera() {
         const modal = document.getElementById('aiCameraModal');
         const video = document.getElementById('aiCameraVideo');
+        
+        // Brauzer HTTP sababli kamerani butunlay o'chirib qo'ygan bo'lsa
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error('Camera API is not supported or blocked by browser.');
+            addMessage("⚠️ Xavfsizlik qoidalariga ko'ra (HTTPS ulanish bo'lmagani uchun) brauzer kamerani blokladi. Iltimos, localhost yoki HTTPS orqali kiring, yoki rasmni galereyadan yuklang.", 'bot', false);
+            return;
+        }
+
         modal.classList.add('open');
 
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 } })

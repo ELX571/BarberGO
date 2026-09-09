@@ -86,9 +86,8 @@ def ai_analyze_face(request):
         if image_data.startswith('data:'):
             header, base64_str = image_data.split(';base64,')
             mime_type = header.replace('data:', '')
-            image_bytes = base64.b64decode(base64_str)
         else:
-            image_bytes = base64.b64decode(image_data)
+            base64_str = image_data
 
         client = genai.Client(api_key=api_key)
 
@@ -103,7 +102,7 @@ def ai_analyze_face(request):
                         {
                             'inline_data': {
                                 'mime_type': mime_type,
-                                'data': image_bytes
+                                'data': base64_str
                             }
                         }
                     ]

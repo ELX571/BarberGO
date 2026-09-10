@@ -514,7 +514,7 @@ window.closeRoom = function() {
         if (nameEl) nameEl.textContent = room.other_user_name || 'Foydalanuvchi';
         
         const statusEl = document.getElementById('chatStatus');
-        if (statusEl) statusEl.textContent = 'Onlayn';
+        if (statusEl) statusEl.textContent = 'Buyurtma #' + room.order_id;
         
         const avatarEl = document.getElementById('chatAvatar');
         if (avatarEl) avatarEl.textContent = (room.other_user_name || '?').charAt(0).toUpperCase();

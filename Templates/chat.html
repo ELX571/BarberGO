@@ -465,7 +465,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRoomList(roomsToRender) {
         listPanel.innerHTML = roomsToRender.map(r => `
             <div class="room-item" data-order="${r.order_id}">
-                <div class="avatar-circle">${(r.other_user_name || '?').charAt(0).toUpperCase()}</div>
+                <div class="avatar-circle" style="background:transparent; padding:0;">
+                    <img src="${r.other_user_avatar || '/media/avatars/default.jpg'}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="User">
+                </div>
                 <div class="room-item-body">
                     <div class="room-item-top">
                         <span class="room-item-name">${escapeHtml(r.other_user_name || 'Foydalanuvchi')}</span>
@@ -517,7 +519,10 @@ window.closeRoom = function() {
         if (statusEl) statusEl.textContent = 'Buyurtma #' + room.order_id;
         
         const avatarEl = document.getElementById('chatAvatar');
-        if (avatarEl) avatarEl.textContent = (room.other_user_name || '?').charAt(0).toUpperCase();
+        if (avatarEl) {
+            avatarEl.innerHTML = `<img src="${room.other_user_avatar || '/media/avatars/default.jpg'}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="User">`;
+            avatarEl.style.background = 'transparent';
+        }
         
         const messagesEl = document.getElementById('chatMessages');
         if (messagesEl) messagesEl.innerHTML = '';

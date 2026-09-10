@@ -85,6 +85,7 @@ class MyChatRoomsView(generics.ListAPIView):
                 'order_id': order.id,
                 'other_user_id': other.id,
                 'other_user_name': other_name,
+                'other_user_avatar': other.get_avatar_url,
                 'last_message': last_msg_text,
                 'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
                 'unread_count': unread,

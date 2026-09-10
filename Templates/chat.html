@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderRoomList(rooms);
                 if (preselectOrderId && !query) {
                     const match = rooms.find(r => String(r.order_id) === String(preselectOrderId));
-                    if (match) openRoom(match);
+                    if (match) window.openRoom(match);
                 }
             })
             .catch(() => {});
@@ -415,30 +415,43 @@ document.addEventListener('DOMContentLoaded', () => {
         listPanel.querySelectorAll('.room-item').forEach(el => {
             el.addEventListener('click', () => {
                 const room = allRooms.find(r => String(r.order_id) === el.dataset.order);
-                openRoom(room);
+                window.openRoom(room);
             });
         });
     }
 
-function closeRoom() {
+window.closeRoom = function() {
     document.getElementById("chatApp").classList.remove("room-open");
     if (socket) { socket.close(); socket = null; }
 }
 
-    function openRoom(room) {
+    window.openRoom = function(room) {
+        if (!room) return;
         currentOrderId = room.order_id;
         document.querySelectorAll('.room-item').forEach(el => {
             el.classList.toggle('active', el.dataset.order === String(room.order_id));
         });
 
-        document.getElementById('chatApp').classList.add('room-open');
-        document.getElementById('backToListBtn').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
-        placeholder.style.display = 'none';
-        conversation.style.display = 'flex';
-        document.getElementById('chatName').textContent = room.other_user_name || 'Foydalanuvchi';
-        document.getElementById('chatStatus').textContent = 'Onlayn';
-        document.getElementById('chatAvatar').textContent = (room.other_user_name || '?').charAt(0).toUpperCase();
-        document.getElementById('chatMessages').innerHTML = '';
+        const appEl = document.getElementById('chatApp');
+        if (appEl) appEl.classList.add('room-open');
+        
+        const backBtn = document.getElementById('backToListBtn');
+        if (backBtn) backBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+        
+        if (placeholder) placeholder.style.display = 'none';
+        if (conversation) conversation.style.display = 'flex';
+        
+        const nameEl = document.getElementById('chatName');
+        if (nameEl) nameEl.textContent = room.other_user_name || 'Foydalanuvchi';
+        
+        const statusEl = document.getElementById('chatStatus');
+        if (statusEl) statusEl.textContent = 'Onlayn';
+        
+        const avatarEl = document.getElementById('chatAvatar');
+        if (avatarEl) avatarEl.textContent = (room.other_user_name || '?').charAt(0).toUpperCase();
+        
+        const messagesEl = document.getElementById('chatMessages');
+        if (messagesEl) messagesEl.innerHTML = '';
 
         if (socket) socket.close();
 
@@ -448,11 +461,15 @@ function closeRoom() {
                 const messages = Array.isArray(data) ? data : (data.results || []);
                 messages.forEach(appendMessage);
             })
-            .catch(err => console.error('Chat history error:', err));
+            .catch(err => console.error("Xabarlarni yuklashda xatolik:", err));
 
         const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
         socket = new WebSocket(`${wsProtocol}://${location.host}/ws/chat/${room.order_id}/?token=${token}`);
-        socket.onmessage = (e) => appendMessage(JSON.parse(e.data));
+        socket.onmessage = (e) => {
+            try {
+                appendMessage(JSON.parse(e.data));
+            } catch (err) {}
+        };
         socket.onclose = () => console.warn('Chat ulanishi uzildi');
     }
 

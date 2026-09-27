@@ -4,7 +4,7 @@
 {% block title %}Soch Turmaklari - BarberGo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
@@ -62,7 +62,7 @@
         <div class="hairstyle-modal-content">
             <span class="hairstyle-modal-close" onclick="closeHairstyleModal()">&times;</span>
             <div class="hairstyle-modal-img-container">
-                <img id="modalImg" src="" alt="Hairstyle" style="width:100%; object-fit:cover;">
+                <img id="modalImg" src="" alt="Hairstyle" style="width:100%; max-height: 350px; object-fit:cover; display: block;">
             </div>
             <div class="hairstyle-modal-body">
                 <h2 id="modalTitle"></h2>
@@ -112,6 +112,14 @@
             if(window.AOS) AOS.refresh();
         }, 500);
     }
+
+    
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('hairstyleModal');
+    if (modal) {
+        document.body.appendChild(modal);
+    }
+});
 
     function openHairstyleModal(imgUrl, title, desc, faceShapes) {
         document.getElementById('modalImg').src = imgUrl || '';

@@ -102,7 +102,7 @@ def ai_analyze_face(request):
                         {
                             'inline_data': {
                                 'mime_type': mime_type,
-                                'data': base64_str
+                                'data': base64.b64decode(base64_str)
                             }
                         }
                     ]

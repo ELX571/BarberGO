@@ -27,7 +27,7 @@
     <!-- Grid of Styles -->
     <div class="hairstyles-grid">
         {% for style in hairstyles %}
-        <div class="hairstyle-card" data-category="{{ style.category }}" style="cursor:pointer;" onclick="openHairstyleModal(`{{ style.image.url|default:style.image_url|default:\'\' }}`, `{{ style.name|escapejs }}`, `{{ style.description|escapejs }}`, `{{ style.target_face_shapes|escapejs }}`)">
+        <div class="hairstyle-card" data-category="{{ style.category }}" style="cursor:pointer;" onclick="openHairstyleModal(`{% if style.image %}{{ style.image.url }}{% elif style.image_url %}{{ style.image_url }}{% endif %}`, `{{ style.name|escapejs }}`, `{{ style.description|escapejs }}`, `{{ style.target_face_shapes|escapejs }}`)">
             <div class="hairstyle-img-wrapper" style="height: 250px; overflow: hidden;">
                 {% if style.image %}
                     <img src="{{ style.image.url }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover;">

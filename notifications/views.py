@@ -31,4 +31,7 @@ def get_user_notifications(request):
             'time': n.created_at.isoformat(),
             'read': False
         })
+
     return Response(data)
+
+

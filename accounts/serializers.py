@@ -79,7 +79,6 @@ class LoginSerializer(serializers.Serializer):
             user = Account.objects.get(username=data['username'])
         except Account.DoesNotExist:
             raise serializers.ValidationError('Username or password is incorrect.')
-
         if not user.check_password(data['password']):
             raise serializers.ValidationError('Username or password is incorrect.')
         data['user'] = user
@@ -103,6 +102,3 @@ class VerificationCodeSerializer(serializers.ModelSerializer):
             'code',
             'expired_at',
         )
-
-
-

@@ -4,7 +4,7 @@
 {% block title %}Soch Turmaklari - BarberGo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=2">
 {% endblock %}
 
 {% block content %}
@@ -27,7 +27,7 @@
     <!-- Grid of Styles -->
     <div class="hairstyles-grid">
         {% for style in hairstyles %}
-        <div class="hairstyle-card" data-category="{{ style.category }}">
+        <div class="hairstyle-card" data-category="{{ style.category }}" style="cursor:pointer;" onclick="openHairstyleModal(`{{ style.image.url|default:style.image_url|default:\'\' }}`, `{{ style.name|escapejs }}`, `{{ style.description|escapejs }}`, `{{ style.target_face_shapes|escapejs }}`)">
             <div class="hairstyle-img-wrapper" style="height: 250px; overflow: hidden;">
                 {% if style.image %}
                     <img src="{{ style.image.url }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -56,7 +56,26 @@
         </div>
         {% endfor %}
     </div>
+
+    <!-- Hairstyle Modal -->
+    <div id="hairstyleModal" class="hairstyle-modal-overlay" onclick="closeHairstyleModal(event)">
+        <div class="hairstyle-modal-content">
+            <span class="hairstyle-modal-close" onclick="closeHairstyleModal()">&times;</span>
+            <div class="hairstyle-modal-img-container">
+                <img id="modalImg" src="" alt="Hairstyle" style="width:100%; object-fit:cover;">
+            </div>
+            <div class="hairstyle-modal-body">
+                <h2 id="modalTitle"></h2>
+                <div class="hairstyle-popularity" style="margin:10px 0; color:#f97316; font-weight:600;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <span id="modalFaceShapes"></span>
+                </div>
+                <p id="modalDesc"></p>
+            </div>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -93,5 +112,23 @@
             if(window.AOS) AOS.refresh();
         }, 500);
     }
+
+    function openHairstyleModal(imgUrl, title, desc, faceShapes) {
+        document.getElementById('modalImg').src = imgUrl || '';
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalDesc').textContent = desc;
+        document.getElementById('modalFaceShapes').textContent = 'Yuz: ' + faceShapes;
+        document.getElementById('hairstyleModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHairstyleModal(e) {
+        if (e && e.target !== document.getElementById('hairstyleModal') && !e.target.classList.contains('hairstyle-modal-close')) {
+            return;
+        }
+        document.getElementById('hairstyleModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
 </script>
 {% endblock %}

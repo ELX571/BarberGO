@@ -225,3 +225,73 @@
         font-size: 0.9rem;
     }
 }
+
+/* Modal Styles */
+.hairstyle-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.hairstyle-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.hairstyle-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.hairstyle-modal-overlay.active .hairstyle-modal-content {
+    transform: translateY(0) scale(1);
+}
+.hairstyle-modal-close {
+    position: absolute;
+    top: 12px; right: 16px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.3);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+}
+.hairstyle-modal-close:hover {
+    background: rgba(0,0,0,0.6);
+}
+.hairstyle-modal-img-container {
+    width: 100%;
+    max-height: 400px;
+    background: #f1f5f9;
+}
+.hairstyle-modal-body {
+    padding: 24px;
+}
+.hairstyle-modal-body h2 {
+    margin: 0 0 10px 0;
+    font-size: 22px;
+    color: #0f172a;
+}
+.hairstyle-modal-body p {
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.6;
+}

@@ -4,19 +4,19 @@
 {% block title %}Soch Turmaklari - BarberGo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/hairstyles.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
 <div class="hairstyles-page fade-in">
     
-    <div class="hairstyles-header" data-aos="fade-down">
+    <div class="hairstyles-header">
         <h1>Soch Turmaklari Katalo'gi</h1>
-        <p>O'zingizga eng mos keladigan uslubni toping va ustangizga ko'rsating</p>
+        <p>O'zingizga eng mos keladigan uslubni toping va barberingizga ko'rsating</p>
     </div>
 
     <!-- Category Filters -->
-    <div class="hairstyles-categories" data-aos="fade-up" data-aos-delay="100">
+    <div class="hairstyles-categories">
         <button class="category-btn active" onclick="filterCategory(this, 'all')">Barchasi</button>
         <button class="category-btn" onclick="filterCategory(this, 'classic')">Klassik</button>
         <button class="category-btn" onclick="filterCategory(this, 'modern')">Zamonaviy</button>
@@ -27,7 +27,7 @@
     <!-- Grid of Styles -->
     <div class="hairstyles-grid">
         {% for style in hairstyles %}
-        <div class="hairstyle-card" data-category="{{ style.category }}" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:'1' }}00">
+        <div class="hairstyle-card" data-category="{{ style.category }}" style="cursor:pointer;" onclick="openHairstyleModal(`{% if style.image %}{{ style.image.url }}{% elif style.image_url %}{{ style.image_url }}{% endif %}`, `{{ style.name|escapejs }}`, `{{ style.description|escapejs }}`, `{{ style.target_face_shapes|escapejs }}`)">
             <div class="hairstyle-img-wrapper" style="height: 250px; overflow: hidden;">
                 {% if style.image %}
                     <img src="{{ style.image.url }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -56,7 +56,26 @@
         </div>
         {% endfor %}
     </div>
+
+    <!-- Hairstyle Modal -->
+    <div id="hairstyleModal" class="hairstyle-modal-overlay" onclick="closeHairstyleModal(event)">
+        <div class="hairstyle-modal-content">
+            <span class="hairstyle-modal-close" onclick="closeHairstyleModal()">&times;</span>
+            <div class="hairstyle-modal-img-container">
+                <img id="modalImg" src="" alt="Hairstyle" style="width:100%; max-height:450px; object-fit:contain; display: block; background:#f8f9fa;">
+            </div>
+            <div class="hairstyle-modal-body">
+                <h2 id="modalTitle"></h2>
+                <div class="hairstyle-popularity" style="margin:10px 0; color:#f97316; font-weight:600;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <span id="modalFaceShapes"></span>
+                </div>
+                <p id="modalDesc"></p>
+            </div>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -93,5 +112,31 @@
             if(window.AOS) AOS.refresh();
         }, 500);
     }
+
+    
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('hairstyleModal');
+    if (modal) {
+        document.body.appendChild(modal);
+    }
+});
+
+    function openHairstyleModal(imgUrl, title, desc, faceShapes) {
+        document.getElementById('modalImg').src = imgUrl || '';
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalDesc').textContent = desc;
+        document.getElementById('modalFaceShapes').textContent = 'Yuz: ' + faceShapes;
+        document.getElementById('hairstyleModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHairstyleModal(e) {
+        if (e && e.target !== document.getElementById('hairstyleModal') && !e.target.classList.contains('hairstyle-modal-close')) {
+            return;
+        }
+        document.getElementById('hairstyleModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
 </script>
 {% endblock %}

@@ -223,3 +223,33 @@
     transform: scale(0.95);
     box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
 }
+
+/* =========================================
+   Mobile Responsiveness (Filters)
+========================================= */
+@media (max-width: 768px) {
+    .filters-layout {
+        flex-direction: column;
+    }
+    
+    .filters-sidebar {
+        width: 100%;
+        position: static;
+        margin-bottom: 1.5rem;
+    }
+    
+    .filters-content {
+        width: 100%;
+    }
+}
+
+/* Filters Polishing */
+@media (min-width: 769px) {
+    .filters-sidebar {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    }
+}

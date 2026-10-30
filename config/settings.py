@@ -51,8 +51,8 @@ ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', [])
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
     'daphne',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'posts',
     'orders',
     'notifications',
+    'chat',
     'face_ai',
 
     #rd
@@ -99,6 +100,7 @@ SWAGGER_SETTINGS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -181,6 +183,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -217,42 +220,45 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Jazzmin settings
 JAZZMIN_SETTINGS = {
     "site_title": "BarberGo Admin",
     "site_header": "BarberGo",
     "site_brand": "BarberGo",
-    # "site_logo": "images/logo.png", # add this later if there is an asset
+    "site_logo": "images/favicon.svg", 
     "login_logo": None,
     "site_logo_classes": "img-circle",
-    "site_icon": None,
+    "site_icon": "images/favicon.svg",
     "welcome_sign": "BarberGo Admin paneliga xush kelibsiz",
     "copyright": "BarberGo",
-    "search_model": ["accounts.Account", "posts.Post"],
+    "search_model": ["accounts.Account", "posts.Post", "face_ai.Hairstyle"],
     "user_avatar": None,
     "topmenu_links": [
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Bosh sahifa",  "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Saytga qaytish", "url": "/", "new_window": True},
     ],
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
+    "order_with_respect_to": ["accounts", "posts", "orders", "face_ai", "notifications", "chat"],
+    "custom_links": {},
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
+        "face_ai.Hairstyle": "fas fa-cut",
         "accounts.Account": "fas fa-user-circle",
-        "posts.Post": "fas fa-cut",
+        "posts.Post": "fas fa-image",
         "posts.Comment": "fas fa-comments",
-        "orders.Order": "fas fa-shopping-cart",
+        "orders.Order": "fas fa-calendar-check",
         "notifications.Notifications": "fas fa-bell",
+        "chat.Message": "fas fa-envelope",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
-    "related_modal_active": True,
+    "related_modal_active": False,
     "custom_css": "css/admin_barbergo_v3.css",
-    "custom_js": "js/admin_barbergo_v3.js",
+    "custom_js": None,
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
@@ -274,15 +280,15 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar": "sidebar-light-orange",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
+    "sidebar_nav_child_indent": False,
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": True,
-    "theme": "litera",
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
     "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
-        "secondary": "btn-outline-secondary",
+        "secondary": "btn-secondary",
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",

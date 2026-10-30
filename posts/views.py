@@ -39,9 +39,7 @@ class Posts(viewsets.GenericViewSet):
 
             ).filter(Q(similarity_title__gt=0.3) | Q(similarity_description__gt=0.3) | Q(similarity_user__gt=0.3)).order_by('-created_at')
 
-            return posts
-
-
+        return posts
 
     def list(self, request):
         posts = Post.objects.all().order_by('-created_at')
@@ -113,6 +111,20 @@ class Posts(viewsets.GenericViewSet):
             'like': like,
             'likes': post.likes.count()
         })
+    @action(detail=True, methods=["post"], url_path="bookmark", permission_classes=[IsAuthenticated])
+    def bookmark(self, request, pk=None):
+        post = self.get_object()
+        if post.bookmarks.filter(id=request.user.id).exists():
+            post.bookmarks.remove(request.user)
+            bookmarked = False
+        else:
+            post.bookmarks.add(request.user)
+            bookmarked = True
+        return Response({
+            "bookmarked": bookmarked,
+            "bookmarks_count": post.bookmarks.count()
+        })
+
 
     @swagger_auto_schema(
         request_body=CommentCreateSerializer,

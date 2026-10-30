@@ -1,0 +1,42 @@
+<!-- Comments Modal -->
+<div id="commentsModalOverlay" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;" onclick="closeCommentsModal(event)">
+    <div class="contact-modal" style="background: #ffffff; width: 90%; max-width: 500px; padding: 20px; border-radius: 16px; display: flex; flex-direction: column; height: 80vh; max-height: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: modalPop 0.2s ease-out; position: relative;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 18px; color: #111827;">Fikrlar (Izohlar)</h3>
+            <button onclick="closeCommentsModal(event)" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280; padding:4px;">&times;</button>
+        </div>
+
+        <!-- Comments List -->
+        <div id="commentsList" style="flex: 1; overflow-y: auto; padding-right: 8px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="text-align: center; color: #9ca3af; margin-top: 20px;">Yuklanmoqda...</div>
+        </div>
+
+        <!-- Quick Emojis -->
+        <div style="display: flex; gap: 12px; padding: 0 4px 12px; border-top: 1px solid #f3f4f6; padding-top: 12px; overflow-x: auto; scrollbar-width: none;">
+            <button onclick="addEmoji('👍')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">👍</button>
+            <button onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">❤️</button>
+            <button onclick="addEmoji('🔥')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">🔥</button>
+            <button onclick="addEmoji('😂')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">😂</button>
+            <button onclick="addEmoji('😍')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">😍</button>
+            <button onclick="addEmoji('🙌')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">🙌</button>
+            <button onclick="addEmoji('👏')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">👏</button>
+            <button onclick="addEmoji('💯')" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">💯</button>
+        </div>
+
+        <!-- Comment Input -->
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="commentInput" placeholder="Izoh yozing..." style="flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 10px 16px; outline: none; font-size: 14px;" onkeypress="if(event.key === 'Enter') submitComment()">
+            <button onclick="submitComment()" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                <i class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+function addEmoji(emoji) {
+    const input = document.getElementById('commentInput');
+    input.value += emoji;
+    input.focus();
+}
+</script>
